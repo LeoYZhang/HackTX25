@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './SpriteChat.css';
 
 interface SpriteChatProps {
@@ -12,6 +13,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     { text: spriteNumber === 1 ? "Hello! I'm your math learning companion. Let's solve some problems together!" : "Welcome back! Ready to continue our math journey?", isUser: false, timestamp: new Date() }
   ]);
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const sprites = {
     1: { emoji: '🧮', name: 'Calculator', color: '#3b82f6' },
@@ -54,6 +56,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   };
 
   const handleLogout = () => {
+    logout();
     navigate('/login');
   };
 

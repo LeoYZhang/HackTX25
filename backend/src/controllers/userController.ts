@@ -269,7 +269,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       id: user._id,
       username: user.username,
       points: user.points,
-      mindmap: user.mindmap,
+    //   mindmap: user.mindmap,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };

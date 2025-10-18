@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Login.css';
 
 interface LoginFormData {
   username: string;
   password: string;
+}
+
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id: string;
+    username: string;
+    points: number;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 const Login: React.FC = () => {
@@ -13,7 +26,9 @@ const Login: React.FC = () => {
     password: ''
   });
   const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,7 +40,7 @@ const Login: React.FC = () => {
     if (error) setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -39,12 +54,37 @@ const Login: React.FC = () => {
       return;
     }
 
-    // For demo purposes, accept any non-empty credentials
-    // In a real app, you'd validate against a backend
-    if (formData.username.trim() && formData.password.trim()) {
-      navigate('/file-upload');
-    } else {
-      setError('Invalid credentials');
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('http://localhost:5001/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username.trim(),
+          password: formData.password
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (data.success && data.data) {
+        // Use auth context to store user data
+        login(data.data);
+        
+        // Navigate to file upload page
+        navigate('/file-upload');
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Network error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,8 +132,8 @@ const Login: React.FC = () => {
             </div>
           )}
           
-          <button type="submit" className="login-button">
-            Sign In
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
       </div>
