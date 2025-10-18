@@ -1,6 +1,8 @@
 import express, { Application, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import userRoutes from './routes/userRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -9,15 +11,38 @@ const app: Application = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || '';
 
+// CORS configuration - allow all origins
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false // Set to true if you need to send cookies
+}));
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api', userRoutes);
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
   res.json({ 
     message: 'Welcome to HackTX25 Backend API',
-    status: 'Server is running successfully!'
+    status: 'Server is running successfully!',
+    endpoints: {
+      health: '/health',
+      users: {
+        create: 'POST /api/users',
+        getAll: 'GET /api/users',
+        getById: 'GET /api/users/:id',
+        getByUsername: 'GET /api/users/username/:username',
+        update: 'PUT /api/users/:id',
+        delete: 'DELETE /api/users/:id',
+        login: 'POST /api/users/login'
+      }
+    }
   });
 });
 
