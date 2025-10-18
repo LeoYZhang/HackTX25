@@ -26,7 +26,7 @@ export async function queryGemini(
   options: GeminiQueryOptions = {}
 ): Promise<string> {
   const {
-    model = "gemini-2.5-flash",
+    model = "gemini-2.5-flash-lite",
     responseMimeType,
     temperature,
     maxOutputTokens
