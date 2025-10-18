@@ -6,6 +6,7 @@ import './Login.css';
 interface LoginFormData {
   username: string;
   password: string;
+  confirmPassword?: string;
 }
 
 interface LoginResponse {
@@ -21,9 +22,11 @@ interface LoginResponse {
 }
 
 const Login: React.FC = () => {
+  const [isSignup, setIsSignup] = useState<boolean>(false);
   const [formData, setFormData] = useState<LoginFormData>({
     username: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,6 +43,16 @@ const Login: React.FC = () => {
     if (error) setError('');
   };
 
+  const toggleMode = () => {
+    setIsSignup(!isSignup);
+    setFormData({
+      username: '',
+      password: '',
+      confirmPassword: ''
+    });
+    setError('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -54,11 +67,30 @@ const Login: React.FC = () => {
       return;
     }
 
+    // Additional validation for signup
+    if (isSignup) {
+      if (!formData.confirmPassword?.trim()) {
+        setError('Please confirm your password');
+        return;
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+      
+      if (formData.password.length < 6) {
+        setError('Password must be at least 6 characters long');
+        return;
+      }
+    }
+
     setIsLoading(true);
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5001/api/users/login', {
+      const endpoint = isSignup ? 'http://localhost:5001/api/users' : 'http://localhost:5001/api/users/login';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,10 +110,10 @@ const Login: React.FC = () => {
         // Navigate to file upload page
         navigate('/file-upload');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || (isSignup ? 'Signup failed' : 'Login failed'));
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error(isSignup ? 'Signup error:' : 'Login error:', error);
       setError('Network error');
     } finally {
       setIsLoading(false);
@@ -92,6 +124,9 @@ const Login: React.FC = () => {
     <div className="login-container">
       <div className="login-card">
         <h1 className="login-title">Meow4.me</h1>
+        <p className="login-subtitle">
+          {isSignup ? 'Create your account' : 'Welcome back!'}
+        </p>
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -121,10 +156,28 @@ const Login: React.FC = () => {
               value={formData.password}
               onChange={handleInputChange}
               className="form-input"
-              placeholder="Enter your password"
-              autoComplete="current-password"
+              placeholder={isSignup ? "Create a password" : "Enter your password"}
+              autoComplete={isSignup ? "new-password" : "current-password"}
             />
           </div>
+
+          {isSignup && (
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+              />
+            </div>
+          )}
           
           {error && (
             <div className="error-message">
@@ -133,8 +186,21 @@ const Login: React.FC = () => {
           )}
           
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? (isSignup ? 'Creating Account...' : 'Signing In...') : (isSignup ? 'Create Account' : 'Sign In')}
           </button>
+
+          <div className="toggle-mode">
+            <p>
+              {isSignup ? 'Already have an account?' : "Don't have an account?"}
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="toggle-button"
+              >
+                {isSignup ? 'Sign In' : 'Sign Up'}
+              </button>
+            </p>
+          </div>
         </form>
       </div>
     </div>

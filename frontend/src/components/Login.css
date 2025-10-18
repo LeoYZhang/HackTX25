@@ -117,4 +117,33 @@
     cursor: not-allowed;
     transform: none;
   }
+
+  .toggle-mode {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .toggle-mode p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 4px;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+  }
+
+  .toggle-button:hover {
+    color: #1d4ed8;
+  }
   
