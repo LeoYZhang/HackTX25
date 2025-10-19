@@ -40,7 +40,7 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 64px;
+  gap: 24px;
 }
 
 .logo-icon {
@@ -63,10 +63,6 @@
 }
 
 .logo-text {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #333333;
-  transform: scale(2);
   animation: fadeIn 0.8s ease-out 0.5s backwards;
 }
 
@@ -80,6 +76,7 @@
 }
 
 .logo-educat {
+  font-size: 2rem;
   color: #333333;
 }
 

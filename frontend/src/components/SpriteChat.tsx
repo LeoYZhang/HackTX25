@@ -57,7 +57,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const handleNext = () => {
