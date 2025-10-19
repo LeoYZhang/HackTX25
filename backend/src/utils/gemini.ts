@@ -159,6 +159,11 @@ Your role is to:
 2) If the input is a user response to your previous question, evaluate if the response truly shows understanding of the topic and return either "Yes" or "No".
 3) If the input is "Explain {topic}", provide an explanation of the given topic, specifically focusing on the aspects of that topic that relate to the main problem.
 
+CRITICAL FORMATTING RULES:
+- For topic questions: Ask a specific question about the topic
+- For user responses: Respond with ONLY "Yes" or "No" - no other text
+- For explanations: Provide a clear explanation of the topic
+
 Do not provide direct solutions or answers. Only ask guiding questions, evaluate responses, or explain topics when explicitly requested.`;
     } else {
       return `You are a math learning companion AI whose goal is to test and evaluate the user's understanding of the main problem and its solution.${problemContext}
@@ -208,6 +213,13 @@ Ask probing questions about their reasoning, methodology, and understanding of t
   }
 
   /**
+   * Get the teacher mode status
+   */
+  getIsTeacherMode(): boolean {
+    return this.isTeacherMode;
+  }
+
+  /**
    * Serialize the chat session to a JSON string
    */
   serialize(): string {
@@ -232,14 +244,30 @@ Ask probing questions about their reasoning, methodology, and understanding of t
    */
   static deserialize(serializedData: string): ChatSession {
     const sessionData = JSON.parse(serializedData);
-    const session = new ChatSession(sessionData.options, sessionData.isTeacherMode || false, sessionData.problem || "");
     
-    // Restore the messages array
-    if (sessionData.messages && Array.isArray(sessionData.messages)) {
-      session.restoreMessages(sessionData.messages);
+    // Check if this is a nested state object with chatSession property
+    if (sessionData.chatSession) {
+      // This is a state object, extract the chatSession
+      const chatSessionData = JSON.parse(sessionData.chatSession);
+      const session = new ChatSession(chatSessionData.options, chatSessionData.isTeacherMode, chatSessionData.problem);
+      
+      // Restore the messages array
+      if (chatSessionData.messages && Array.isArray(chatSessionData.messages)) {
+        session.restoreMessages(chatSessionData.messages);
+      }
+      
+      return session;
+    } else {
+      // This is a direct ChatSession object
+      const session = new ChatSession(sessionData.options, sessionData.isTeacherMode, sessionData.problem);
+      
+      // Restore the messages array
+      if (sessionData.messages && Array.isArray(sessionData.messages)) {
+        session.restoreMessages(sessionData.messages);
+      }
+      
+      return session;
     }
-    
-    return session;
   }
 }
 

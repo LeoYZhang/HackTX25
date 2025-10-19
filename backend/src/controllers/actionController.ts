@@ -4,46 +4,63 @@ import { User } from "../models/User";
 import { getPrerequisites } from '../utils/prereq';
 import { ChatSession, serializeChatSession } from '../utils/gemini';
 
-export const uploadProblem = async (req: Request, res: Response): Promise<void> =>  {
-    console.log(req.body);
-    try {
-        // const { username, file, mimeType } = req.body;
-        // const user = await User.findOne({ username });
-        // if (!user) {
-        //     res.status(404).json({
-        //         success: false,
-        //         message: 'User not found'
-        //     });
-        //     return;
-        // }
-        // const mindmap = JSON.parse(user.mindmap);
-        // const problem = await extractOneProblem(file, mimeType);
-        // type tuple = [string, boolean];
-        // let stack: tuple[] = [];
-        // let seenTopics: string[] = JSON.parse(mindmap.topics);
-        // let prereqs = await getPrerequisites(problem, seenTopics);
-        //  for (const prereq of prereqs) {
-        //      stack.push([prereq, false]);
-        //  }
-         
-        //  const chatSession = new ChatSession({}, true, problem);
-        //  let msg = "";
-        //  if (stack.length > 0) {
-        //     const response = await chatSession.sendMessage(stack[stack.length - 1][0]);
-        //     msg = response;
-        //  }
-        // const state = {
-        //     chatSession: serializeChatSession(chatSession),
-        //     stack: stack,
-        //     seenTopics: seenTopics
-        // };
 
-        // await User.findOneAndUpdate(
-        //     { username },
-        //     { state: JSON.stringify(state) }
-        // );
+export const uploadProblem = async (req: Request, res: Response): Promise<void> =>  {
+    try {
+        const { username, file, mimeType } = req.body;
+        const user = await User.findOne({ username });
+        if (!user) {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+            return;
+        }
+        const mindmap = JSON.parse(user.mindmap);
+        // Convert file string to Buffer if needed
+        let fileBuffer: Buffer;
+        if (typeof file === 'string') {
+            // If file is base64 encoded, decode it
+            fileBuffer = Buffer.from(file, 'base64');
+        } else if (file instanceof Buffer) {
+            fileBuffer = file;
+        } else {
+            throw new Error('Invalid file format');
+        }
         
-        const msg = "Hello, how are you?";
+        const problem = await extractOneProblem(fileBuffer, mimeType);
+        type tuple = [string, boolean];
+        let stack: tuple[] = [];
+        let seenTopics: string[] = [];
+        if (mindmap.topics) {
+            if (typeof mindmap.topics === 'string') {
+                seenTopics = JSON.parse(mindmap.topics);
+            } else if (Array.isArray(mindmap.topics)) {
+                seenTopics = mindmap.topics;
+            }
+        }
+        let prereqs = await getPrerequisites(problem, seenTopics);
+         for (const prereq of prereqs) {
+             stack.push([prereq, false]);
+         }
+         
+         const chatSession = new ChatSession({}, true, problem);
+         let msg = "";
+         if (stack.length > 0) {
+            const response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+            msg = response;
+         }
+        const state = {
+            chatSession: serializeChatSession(chatSession),
+            stack: stack,
+            seenTopics: seenTopics
+        };
+
+        await User.findOneAndUpdate(
+            { username },
+            { state: JSON.stringify(state) }
+        );
+        
         res.status(200).json({
             success: true,
             message: msg
@@ -72,15 +89,28 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
         const chatSession = ChatSession.deserialize(user.state);
         let stack = JSON.parse(user.state).stack;
         let seenTopics = JSON.parse(user.state).seenTopics;
-        let response = await chatSession.sendMessage(message);
+        let response = await chatSession.sendMessage('This is a user response, respond with either "Yes" or "No" to indicate if the user shows understanding of the topic and correctly answers your previous question:' + message);
+        
         let mindmap = JSON.parse(user.mindmap);
+        // Ensure mindmap has topics array - handle both old and new structures
+        if (!mindmap.topics) {
+            mindmap.topics = [];
+        } else if (typeof mindmap.topics === 'string') {
+            // If topics is stored as a JSON string, parse it
+            mindmap.topics = JSON.parse(mindmap.topics);
+        }
         if (response === "Yes") {
             type tuple = [string, boolean];
             let element: tuple = stack.pop();
-            if (element[1]) {
+            if (!element[1]) {
                 mindmap.topics.push(element[0]);
             }
-            response = await chatSession.sendMessage(stack[stack.length - 1][0]);
+            // Ask about the next topic in the stack
+            if (stack.length > 0) {
+                response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+            } else {
+                response = "No more topics available. You're ready to solve the problem!";
+            }
         } else if (response === "No") {
             stack[stack.length - 1][1] = true;
             let subtopics = await getPrerequisites(stack[stack.length - 1][0], seenTopics);
@@ -89,12 +119,17 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
                 for (const subtopic of subtopics) {
                     stack.push([subtopic, false]);
                 }
-                response = await chatSession.sendMessage(stack[stack.length - 1][0]);
+                response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
             } else {
-                response = await chatSession.sendMessage("Explain " + stack.pop()![0]);
+                response = await chatSession.sendMessage("Explain " + stack.pop()![0] + "\n");
+                if (stack.length > 0) {
+                    response += await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+                } else {
+                    response = "No more topics available. You're ready to solve the problem!";
+                }
             }
         } else {
-            console.log("This is bad");
+            console.log("BAD RESPONSE");
         }
 
         // Check if stack is empty and switch to student mode
@@ -105,6 +140,7 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
                 JSON.parse(currentState.chatSession).problem : "";
             
             // Create new student chat session (isTeacherMode = false)
+            
             const newStudentChatSession = new ChatSession({}, false, problem);
             
             const state = {
@@ -123,7 +159,7 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
 
             res.status(200).json({
                 success: true,
-                message: "All topics covered! Switched to student mode. Please provide your solution to the problem.",
+                message: response,
                 done: true
             });
             return;
@@ -141,7 +177,7 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
                 mindmap: JSON.stringify(mindmap)
             }
         );
-        
+
         res.status(200).json({
             success: true,
             message: response,
@@ -202,7 +238,7 @@ export const teacherCatDone = async (req: Request, res: Response): Promise<void>
             
             let response: string;
             if (stack.length > 0) {
-                response = await chatSession.sendMessage(stack[stack.length - 1][0]);
+                response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
             } else {
                 response = "No more questions available. You're ready to solve the problem!";
             }
@@ -246,7 +282,12 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         }
 
         const chatSession = ChatSession.deserialize(user.state);
-        let response = await chatSession.sendMessage(message);
+        let response;
+        if (chatSession.getHistory().length > 1) {
+            response = await chatSession.sendMessage('This is a user response to your previous question. If you believe the user fully understands everything necessary, return only the text "Done" and nothing else. If not, either ask a follow up question to their response or ask a question about their initial solution: ' + message);
+        } else {
+            response = await chatSession.sendMessage('This is the user\'s initial solution to the problem, ask questions to pick at the user\'s solution and responses to ensure their understanding is solid. If you believe the user fully understands everything necessary, return only the text "Done" and nothing else: ' + message);
+        }
         
         // Check if the student has completed their understanding
         if (response === "Done") {
