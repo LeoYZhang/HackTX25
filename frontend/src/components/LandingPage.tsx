@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import OnboardingModal from './OnboardingModal';
+import LoginModal from './LoginModal';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginModalMode, setLoginModalMode] = useState<'login' | 'signup'>('login');
 
   const handleGetStarted = () => {
-    navigate('/login?mode=signup');
+    setIsOnboardingModalOpen(true);
   };
 
   const handleLogIn = () => {
-    navigate('/login?mode=login');
+    setLoginModalMode('login');
+    setIsLoginModalOpen(true);
   };
 
   return (
@@ -88,6 +94,24 @@ const LandingPage: React.FC = () => {
       <footer className="landing-footer">
         <span className="footer-text">hacktx25</span>
       </footer>
+
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={isOnboardingModalOpen} 
+        onClose={() => setIsOnboardingModalOpen(false)} 
+        onSignup={() => {
+          setIsOnboardingModalOpen(false);
+          setLoginModalMode('signup');
+          setIsLoginModalOpen(true);
+        }}
+      />
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)}
+        initialMode={loginModalMode}
+      />
     </div>
   );
 };

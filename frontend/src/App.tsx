@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LandingPage from './components/LandingPage';
-import Login from './components/Login';
 import FileUpload from './components/FileUpload';
 import SpriteChat from './components/SpriteChat';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -15,7 +14,6 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
             <Route 
               path="/file-upload" 
               element={
