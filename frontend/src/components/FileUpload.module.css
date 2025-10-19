@@ -18,6 +18,10 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  background-image: url('/public/assets/background.png'); /* 👈 Replace with the actual path to your image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .file-upload-header {
@@ -237,7 +241,7 @@
 }
 
 .upload-button {
-  background: linear-gradient(135deg, var(--vibrant-green) 0%, #8bc43f 100%);
+  background: var(--vibrant-green);
   color: white;
   border: none;
   padding: 14px 32px;

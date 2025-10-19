@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './SpriteChat.module.css';
 
@@ -20,6 +20,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const [selectedStudentSprite, setSelectedStudentSprite] = useState<string>('student_base.png');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuth();
 
   const teacherSprites = [
@@ -42,23 +43,32 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
 
   // Load saved messages for this page
   useEffect(() => {
+    const savedMessageText = localStorage[`sprite-chat-${spriteNumber}-message`];
+  
+    // Initialize with initial message from upload or default welcome message
+    const welcomeMessage: Message = {
+      text: savedMessageText || (spriteNumber === 1 
+        ? "Hello! I'm your math teacher. Let's solve some problems together!" 
+        : "Welcome back! Ready to continue our math journey?"),
+      isUser: false,
+      timestamp: new Date()
+    };
+    setMessages([welcomeMessage]);
+  }, [spriteNumber, location.state, navigate, location.pathname]);
+
+  // Check for stored initial message on component mount (handles page reloads)
+  useEffect(() => {
+    const storedInitialMessage = localStorage.getItem(`sprite-chat-${spriteNumber}-initial-message`);
     const savedMessages = localStorage.getItem(`sprite-chat-${spriteNumber}-messages`);
-    if (savedMessages) {
-      const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
-        ...msg,
-        timestamp: new Date(msg.timestamp)
-      }));
-      setMessages(parsedMessages);
-    } else {
-      // Initialize with welcome message
-      const welcomeMessage: Message = {
-        text: spriteNumber === 1 
-          ? "Hello! I'm your math teacher. Let's solve some problems together!" 
-          : "Welcome back! Ready to continue our math journey?",
+    
+    // If there's a stored initial message and no saved messages, use the initial message
+    if (storedInitialMessage && !savedMessages) {
+      const initialMessage: Message = {
+        text: storedInitialMessage,
         isUser: false,
         timestamp: new Date()
       };
-      setMessages([welcomeMessage]);
+      setMessages([initialMessage]);
     }
   }, [spriteNumber]);
 
@@ -190,9 +200,11 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   };
 
   const handleRestart = () => {
-    // Clear messages for both pages
+    // Clear messages and initial messages for both pages
     localStorage.removeItem('sprite-chat-1-messages');
     localStorage.removeItem('sprite-chat-2-messages');
+    localStorage.removeItem('sprite-chat-1-initial-message');
+    localStorage.removeItem('sprite-chat-2-initial-message');
     navigate('/file-upload');
   };
 

@@ -77,29 +77,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
     
     // Basic validation
     if (!formData.username.trim()) {
-      setError('Username is required');
+      setError('username is required');
       return;
     }
     
     if (!formData.password.trim()) {
-      setError('Password is required');
+      setError('password is required');
       return;
     }
 
     // Additional validation for signup
     if (isSignup) {
       if (!formData.confirmPassword?.trim()) {
-        setError('Please confirm your password');
+        setError('please confirm your password');
         return;
       }
       
       if (formData.password !== formData.confirmPassword) {
-        setError('Passwords do not match');
+        setError('passwords do not match');
         return;
       }
       
       if (formData.password.length < 6) {
-        setError('Password must be at least 6 characters long');
+        setError('password must be at least 6 characters long');
         return;
       }
     }
@@ -130,10 +130,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
         onClose();
         navigate('/file-upload');
       } else {
-        setError(data.message || (isSignup ? 'Signup failed' : 'Login failed'));
+        setError(data.message || (isSignup ? 'signup failed' : 'login failed'));
       }
     } catch (error) {
-      console.error(isSignup ? 'Signup error:' : 'Login error:', error);
+      console.error(isSignup ? 'signup error:' : 'login error:', error);
       setError('Network error');
     } finally {
       setIsLoading(false);
@@ -166,7 +166,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
           <form onSubmit={handleSubmit} className={styles['login-modal-form']}>
             <div className={styles['form-group']}>
               <label htmlFor="username" className={styles['form-label']}>
-                Username
+                username
               </label>
               <input
                 type="text"
@@ -175,14 +175,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                 value={formData.username}
                 onChange={handleInputChange}
                 className={styles['form-input']}
-                placeholder="Enter your username"
+                placeholder="enter your username"
                 autoComplete="username"
               />
             </div>
             
             <div className={styles['form-group']}>
               <label htmlFor="password" className={styles['form-label']}>
-                Password
+                password
               </label>
               <input
                 type="password"
@@ -191,7 +191,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                 value={formData.password}
                 onChange={handleInputChange}
                 className={styles['form-input']}
-                placeholder={isSignup ? "Create a password" : "Enter your password"}
+                placeholder={isSignup ? "create a password" : "enter your password"}
                 autoComplete={isSignup ? "new-password" : "current-password"}
               />
             </div>
@@ -199,7 +199,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
             {isSignup && (
               <div className={styles['form-group']}>
                 <label htmlFor="confirmPassword" className={styles['form-label']}>
-                  Confirm Password
+                  confirm password
                 </label>
                 <input
                   type="password"
@@ -208,7 +208,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className={styles['form-input']}
-                  placeholder="Confirm your password"
+                  placeholder="confirm your password"
                   autoComplete="new-password"
                 />
               </div>
@@ -221,18 +221,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
             )}
             
             <button type="submit" className={styles['login-modal-button']} disabled={isLoading}>
-              {isLoading ? (isSignup ? 'Creating Account...' : 'Signing In...') : (isSignup ? 'Create Account' : 'Sign In')}
+              {isLoading ? (isSignup ? 'creating Account...' : 'signing In...') : (isSignup ? 'create Account' : 'sign In')}
             </button>
 
             <div className={styles['toggle-mode']}>
               <p>
-                {isSignup ? 'Already have an account?' : "Don't have an account?"}
+                {isSignup ? 'already have an account?' : "don't have an account?"}
                 <button
                   type="button"
                   onClick={toggleMode}
                   className={styles['toggle-button']}
                 >
-                  {isSignup ? 'Sign In' : 'Sign Up'}
+                  {isSignup ? 'sign In' : 'sign Up'}
                 </button>
               </p>
             </div>
