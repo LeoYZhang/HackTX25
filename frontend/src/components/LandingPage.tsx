@@ -50,7 +50,7 @@ const LandingPage: React.FC = () => {
           <h1 className={styles['main-heading']}>learn with cats!</h1>
           
           <blockquote className={styles['quote']} style={{ letterSpacing: '0.1em', fontFamily: 'Roboto Mono, monospace' }}>
-            a personalized experience where you learn not just how to <span className={styles['underline-teal']}>do</span>, but how to <span className={styles['underline-pink']}>think</span>
+            a personalized experience where you learn not just how to do, but how to <span className={styles['underline-teal']}>think</span>
           </blockquote>
 
           <div className={styles['cta-buttons']}>
