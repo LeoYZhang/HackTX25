@@ -4,16 +4,6 @@
   display: flex;
   flex-direction: column;
   font-family: 'Roboto Mono', monospace;
-  animation: pageLoad 0.5s ease-out;
-}
-
-@keyframes pageLoad {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 /* Header */
@@ -23,18 +13,6 @@
   align-items: center;
   padding: 40px 80px;
   background: #fefefe;
-  animation: slideDown 0.8s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .logo {
@@ -48,18 +26,6 @@
   height: 40px;
   object-fit: contain;
   transform: scale(2);
-  animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s backwards;
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(2);
-  }
 }
 
 .logo-text {
@@ -67,16 +33,6 @@
   font-weight: 600;
   color: #333333;
   transform: scale(2);
-  animation: fadeIn 0.8s ease-out 0.5s backwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .logo-educat {
@@ -98,18 +54,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: rotateIn 0.8s ease-out 0.6s backwards;
-}
-
-@keyframes rotateIn {
-  from {
-    opacity: 0;
-    transform: rotate(-180deg) scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: rotate(0) scale(1);
-  }
 }
 
 .dark-mode-toggle:hover {
@@ -142,18 +86,6 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  animation: slideInLeft 1s ease-out 0.2s backwards;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .teacher-cat-container {
@@ -161,18 +93,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: floatIn 1.2s ease-out 0.4s backwards;
-}
-
-@keyframes floatIn {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .teacher-cat {
@@ -194,7 +114,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: floatIn 1.2s ease-out 0.6s backwards;
 }
 
 .student-cat {
@@ -214,18 +133,6 @@
   position: relative;
   max-width: 650px;
   transform: scale(1.1);
-  animation: slideInRight 1s ease-out 0.4s backwards;
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(60px) scale(1.1);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1.1);
-  }
 }
 
 .main-heading {
@@ -235,18 +142,6 @@
   color: #333333;
   margin: 0 0 24px 0;
   line-height: 1.1;
-  animation: fadeInUp 1s ease-out 0.6s backwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .quote {
@@ -256,31 +151,22 @@
   margin: 0 0 32px 0;
   line-height: 1.5;
   position: relative;
-  animation: fadeInUp 1s ease-out 0.8s backwards;
 }
 
 .underline-red {
   text-decoration: underline;
-  text-decoration-color: transparent;
+  text-decoration-color: #ed9594;
   text-decoration-style: wavy;
   text-underline-offset: 4px;
   text-decoration-thickness: 2px;
-  animation: underlineDraw 1.2s ease-out 1.8s forwards;
-}
-
-@keyframes underlineDraw {
-  to {
-    text-decoration-color: #ed9594;
-  }
 }
 
 .underline {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-style: flat;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
-  animation: underlineDraw 1.2s ease-out 2s forwards;
+    text-decoration: underline;
+    text-decoration-color: #ed9594;
+    text-decoration-style: flat;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
 }
 
 .cta-buttons {
@@ -308,21 +194,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .get-started {
   background: #abd253;
   color: #fefefe;
-  animation: slideInButton 0.8s ease-out 1s forwards;
-}
-
-@keyframes slideInButton {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .get-started:hover {
@@ -334,7 +210,6 @@
 .log-in {
   background: #5192c8;
   color: #fefefe;
-  animation: slideInButton 0.8s ease-out 1.2s forwards;
 }
 
 .log-in:hover {
@@ -358,8 +233,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-out forwards;
 }
 
 .star-1 {
@@ -367,7 +240,6 @@
   left: -45%;
   transform: scale(0.25);
   color: #fbbf24;
-  animation-delay: 1.4s;
 }
 
 .star-2 {
@@ -375,14 +247,12 @@
   left: 2%;
   transform: scale(0.2);
   color: #5192c8;
-  animation-delay: 1.5s;
 }
 
 .star-3 {
   top: -12%;
   left: 8%;
   color: #abd253;
-  animation-delay: 1.6s;
 }
 
 .star-4 {
@@ -390,7 +260,6 @@
   left: 100%;
   transform: translateX(-50%);
   color: #ed9594;
-  animation-delay: 1.7s;
 }
 
 .star-5 {
@@ -398,7 +267,6 @@
   left: 95%;
   transform: translateX(-50%);
   color: #5192c8;
-  animation-delay: 1.8s;
 }
 
 /* Footer */
@@ -406,7 +274,6 @@
   padding: 20px 40px;
   text-align: right;
   background: #fefefe;
-  animation: fadeIn 1s ease-out 2s backwards;
 }
 
 .footer-text {
