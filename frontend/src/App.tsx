@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import LandingPage from './components/LandingPage';
 import FileUpload from './components/FileUpload';
 import SpriteChat from './components/SpriteChat';
+import UserProfile from './components/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -17,9 +18,9 @@ function App() {
             <Route 
               path="/file-upload" 
               element={
-                // <ProtectedRoute>
+                <ProtectedRoute>
                   <FileUpload />
-                // </ProtectedRoute>
+                </ProtectedRoute>
               } 
             />
             <Route 
@@ -38,7 +39,15 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-          </Routes>
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>            
         </div>
       </Router>
     </AuthProvider>
