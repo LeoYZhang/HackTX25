@@ -71,7 +71,7 @@ export async function queryGeminiWithFile(
   }
 
   const {
-    model = "gemini-2.5-flash",
+    model = "gemini-2.5-flash-lite",
     responseMimeType,
     temperature,
     maxOutputTokens
