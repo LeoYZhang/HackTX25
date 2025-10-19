@@ -15,7 +15,7 @@
 }
 
 .login-modal-content {
-  background: white;
+  background: #fefefe;
   border-radius: 20px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   max-width: 500px;
@@ -41,7 +41,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 30px 30px 16px 30px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #fefefe;
 }
 
 .login-modal-logo {
@@ -60,18 +60,18 @@
 .login-logo-text {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #374151;
+  color: #333333;
   transform: scale(1.5);
   font-family: 'Roboto Mono', monospace;
 }
 
 .login-logo-educat {
-  color: #374151;
+  color: #333333;
 }
 
 .login-logo-educat::after {
   content: "cat";
-  color: #f87171;
+  color: #ed9594;
 }
 
 .login-modal-title {

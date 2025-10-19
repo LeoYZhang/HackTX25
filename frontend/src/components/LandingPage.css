@@ -1,6 +1,6 @@
 .landing-container {
   min-height: 100vh;
-  background: white;
+  background: #fefefe;
   display: flex;
   flex-direction: column;
   font-family: 'Roboto Mono', monospace;
@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 40px 80px;
-  background: white;
+  background: #fefefe;
 }
 
 .logo {
@@ -31,17 +31,17 @@
 .logo-text {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #374151;
+  color: #333333;
   transform: scale(2);
 }
 
 .logo-educat {
-  color: #374151;
+  color: #333333;
 }
 
 .logo-educat::after {
   content: "cat";
-  color: #f87171;
+  color: #ed9594;
 }
 
 .dark-mode-toggle {
@@ -57,11 +57,11 @@
 }
 
 .dark-mode-toggle:hover {
-  background-color: #f3f4f6;
+  background-color: #fefefe;
 }
 
 .moon-icon {
-  color: #374151;
+  color: #333333;
 }
 
 /* Main Content */
@@ -103,7 +103,7 @@
 }
 
 .chalk-text {
-  color: white;
+  color: #fefefe;
   font-size: 0.8rem;
   font-weight: 600;
   font-family: 'Courier New', monospace;
@@ -139,7 +139,7 @@
   font-size: 2.5rem;
   font-weight: 700;
   font-family: 'Roboto Mono', monospace;
-  color: #374151;
+  color: #333333;
   margin: 0 0 24px 0;
   line-height: 1.1;
 }
@@ -155,7 +155,7 @@
 
 .underline-red {
   text-decoration: underline;
-  text-decoration-color: #d76dcb;
+  text-decoration-color: #ed9594;
   text-decoration-style: wavy;
   text-underline-offset: 4px;
   text-decoration-thickness: 2px;
@@ -163,7 +163,7 @@
 
 .underline {
     text-decoration: underline;
-    text-decoration-color: #9f75ff;
+    text-decoration-color: #ed9594;
     text-decoration-style: flat;
     text-underline-offset: 4px;
     text-decoration-thickness: 2px;
@@ -198,7 +198,7 @@
 
 .get-started {
   background: #abd253;
-  color: white;
+  color: #fefefe;
 }
 
 .get-started:hover {
@@ -209,7 +209,7 @@
 
 .log-in {
   background: #5192c8;
-  color: white;
+  color: #fefefe;
 }
 
 .log-in:hover {
@@ -246,34 +246,34 @@
   top: -8%;
   left: 2%;
   transform: scale(0.2);
-  color: #60a5fa;
+  color: #5192c8;
 }
 
 .star-3 {
   top: -12%;
   left: 8%;
-  color: #34d399;
+  color: #abd253;
 }
 
 .star-4 {
   bottom: -5%;
   left: 100%;
   transform: translateX(-50%);
-  color: #f472b6;
+  color: #ed9594;
 }
 
 .star-5 {
   bottom: -20%;
   left: 95%;
   transform: translateX(-50%);
-  color: #3b82f6;
+  color: #5192c8;
 }
 
 /* Footer */
 .landing-footer {
   padding: 20px 40px;
   text-align: right;
-  background: white;
+  background: #fefefe;
 }
 
 .footer-text {
