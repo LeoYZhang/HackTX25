@@ -260,43 +260,27 @@
 }
 
 .underline-red {
-  position: relative;
-  display: inline-block;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-style: wavy;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  animation: underlineDraw 1.2s ease-out 1.8s forwards;
 }
 
-.underline-red::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath d='M0,2 Q2.5,0 5,2 T10,2 T15,2 T20,2' stroke='%23ed9594' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 20px 4px;
-  animation: drawUnderline 1.2s ease-out 1.8s forwards;
-}
-
-@keyframes drawUnderline {
+@keyframes underlineDraw {
   to {
-    width: 100%;
+    text-decoration-color: #ed9594;
   }
 }
 
 .underline {
-  position: relative;
-  display: inline-block;
-}
-
-.underline::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 2px;
-  background-color: #ed9594;
-  animation: drawUnderline 1.2s ease-out 2s forwards;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-style: flat;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  animation: underlineDraw 1.2s ease-out 2s forwards;
 }
 
 .cta-buttons {
