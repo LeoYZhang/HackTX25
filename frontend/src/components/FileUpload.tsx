@@ -36,17 +36,25 @@ const FileUpload: React.FC = () => {
   return (
     <div className="file-upload-container">
       <header className="file-upload-header">
-        <h1>Meow4.me</h1>
+        <div className="header-logo-section">
+          <img 
+            src="/assets/logo.png" 
+            alt="logo" 
+            className="header-logo-img"
+          />
+          <span className="logo-text">
+            <span className="logo-educat">edu</span>
+          </span>
+        </div>
         <button onClick={handleLogout} className="logout-button">
-          Logout
+          logout
         </button>
       </header>
       
       <main className="file-upload-content">
         <div className="upload-card">
-          <div className="upload-icon">📚</div>
-          <h2>Upload Your Math Questions</h2>
-          <p>Please upload a file containing your math questions to begin your learning adventure!</p>
+          <h2>upload your questions</h2>
+          <p>please upload a file containing a problem set to begin learning!</p>
           
           <div className="upload-area">
             <input
@@ -65,8 +73,8 @@ const FileUpload: React.FC = () => {
               ) : (
                 <div className="file-placeholder">
                   <span className="upload-icon-large">📁</span>
-                  <span>Click to select a file</span>
-                  <span className="file-types">Supports: .txt, .pdf, .doc, .docx</span>
+                  <span>click to select a file</span>
+                  <span className="file-types">supports: .txt, .pdf, .doc, .docx</span>
                 </div>
               )}
             </label>
@@ -77,7 +85,7 @@ const FileUpload: React.FC = () => {
             className="upload-button"
             disabled={!selectedFile || isUploading}
           >
-            {isUploading ? 'Processing...' : 'Start Learning Journey'}
+            {isUploading ? 'processing...' : 'start learning'}
           </button>
         </div>
       </main>

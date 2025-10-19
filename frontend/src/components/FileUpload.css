@@ -1,6 +1,18 @@
+/* Import Roboto Mono Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
+/* Color Variables */
+:root {
+  --primary-blue: #5192c8;
+  --vibrant-green: #abd253;
+  --playful-pink: #ed9594;
+  --soft-teal: #9ad7c8;
+  --neutral-dark: #222222;
+}
+
 .file-upload-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, #9ad7c8 0%, #5192c8 100%);
   font-family: 'Roboto Mono', monospace;
 }
 
@@ -11,37 +23,66 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 3px solid var(--soft-teal);
 }
+
+.header-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333333;
+  transform: scale(1);
+}
+
+.logo-educat {
+  color: #333333;
+}
+
+.logo-educat::after {
+  content: "cat";
+  color: #ed9594;
+}
+
 
 .file-upload-header h1 {
   margin: 0;
-  color: #1e40af;
+  color: var(--primary-blue);
   font-size: 1.5rem;
   font-weight: 700;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 .logout-button {
-  background: #ef4444;
+  background: var(--playful-pink);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 600;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .logout-button:hover {
-  background: #dc2626;
+  background: #db7a79;
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(237, 149, 148, 0.3);
 }
 
 .file-upload-content {
@@ -55,12 +96,13 @@
 .upload-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   padding: 3rem;
   max-width: 500px;
   width: 100%;
   text-align: center;
   animation: slideUp 0.5s ease-out;
+  border: 3px solid var(--soft-teal);
 }
 
 @keyframes slideUp {
@@ -80,23 +122,22 @@
 }
 
 .upload-card h2 {
-  color: #1e40af;
+  color: var(--playful-pink);
   margin: 0 0 1rem 0;
   font-size: 1.75rem;
   font-weight: 700;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 .upload-card p {
-  color: #64748b;
+  color: var(--neutral-dark);
   margin: 0 0 2rem 0;
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.6;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  opacity: 0.8;
 }
 
 .upload-area {
@@ -109,17 +150,18 @@
 
 .file-label {
   display: block;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--soft-teal);
   border-radius: 12px;
   padding: 2rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #f8fafc;
+  background: #f8fffe;
 }
 
 .file-label:hover {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  border-color: var(--primary-blue);
+  background: #e8f5f3;
+  transform: translateY(-2px);
 }
 
 .file-placeholder {
@@ -127,7 +169,8 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: var(--neutral-dark);
+  font-family: 'Roboto Mono', monospace;
 }
 
 .upload-icon-large {
@@ -137,18 +180,20 @@
 
 .file-types {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--neutral-dark);
+  opacity: 0.6;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .file-selected {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #059669;
+  color: var(--primary-blue);
   font-weight: 600;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  justify-content: center;
 }
 
 .file-icon {
@@ -161,7 +206,7 @@
 }
 
 .upload-button {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--vibrant-green) 0%, #8bc43f 100%);
   color: white;
   border: none;
   padding: 14px 32px;
@@ -169,16 +214,19 @@
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Roboto Mono', monospace;
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
 }
 
 .upload-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(171, 210, 83, 0.4);
+}
+
+.upload-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .upload-button:disabled {
@@ -190,9 +238,14 @@
 @media (max-width: 768px) {
   .file-upload-header {
     padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  }
+  
+  .header-logo-section {
+    gap: 0.5rem;
+  }
+  
+  .file-upload-header h1 {
+    font-size: 1.25rem;
   }
   
   .file-upload-content {
@@ -201,5 +254,13 @@
   
   .upload-card {
     padding: 2rem;
+  }
+  
+  .upload-card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .upload-card p {
+    font-size: 0.9rem;
   }
 }

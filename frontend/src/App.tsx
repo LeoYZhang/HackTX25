@@ -17,9 +17,9 @@ function App() {
             <Route 
               path="/file-upload" 
               element={
-                <ProtectedRoute>
+                // <ProtectedRoute>
                   <FileUpload />
-                </ProtectedRoute>
+                // </ProtectedRoute>
               } 
             />
             <Route 
