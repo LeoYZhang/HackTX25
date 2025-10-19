@@ -123,7 +123,8 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
 
             res.status(200).json({
                 success: true,
-                message: "All topics covered! Switched to student mode. Please provide your solution to the problem."
+                message: "All topics covered! Switched to student mode. Please provide your solution to the problem.",
+                done: true
             });
             return;
         }
@@ -143,7 +144,8 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
         
         res.status(200).json({
             success: true,
-            message: response
+            message: response,
+            done: false
         });
     } catch (error) {
         console.error('Error in sendTeacherCatMessage:', error);
