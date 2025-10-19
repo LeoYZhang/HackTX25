@@ -35,22 +35,6 @@ const FileUpload: React.FC = () => {
 
   return (
     <div className="file-upload-container">
-      <header className="file-upload-header">
-        <div className="header-logo-section">
-          <img 
-            src="/assets/logo.png" 
-            alt="logo" 
-            className="header-logo-img"
-          />
-          <span className="logo-text">
-            <span className="logo-educat">edu</span>
-          </span>
-        </div>
-        <button onClick={handleLogout} className="logout-button">
-          logout
-        </button>
-      </header>
-      
       <main className="file-upload-content">
         <div className="upload-card">
           <h2>upload your questions</h2>

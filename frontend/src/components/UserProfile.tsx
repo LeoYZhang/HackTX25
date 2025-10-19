@@ -182,27 +182,6 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="user-profile-container">
-      {/* Header */}
-      <header className="profile-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <img src="/assets/logo.png" alt="educat logo" className="logo-icon"/>
-            <h1 className="app-title">edu<span className="logo-cat">cat</span></h1>
-          </div>
-          <div className="header-actions">
-            <button onClick={() => navigate('/file-upload')} className="header-button secondary">
-              📚 Upload
-            </button>
-            <button onClick={() => navigate('/sprite-chat-1')} className="header-button primary">
-              🎯 Learn
-            </button>
-            <button onClick={handleLogout} className="header-button logout">
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="profile-main">
         <div className="profile-hero">

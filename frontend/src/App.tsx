@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import Header from './components/Header';
 import LandingPage from './components/LandingPage';
 import FileUpload from './components/FileUpload';
 import SpriteChat from './components/SpriteChat';
@@ -13,6 +14,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
+          <Header />
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route 
