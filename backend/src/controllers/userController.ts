@@ -4,7 +4,7 @@ import { User, IUser } from '../models/User';
 // Create a new user
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, password, points, mindmap } = req.body;
+    const { username, password, points } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ username });
@@ -21,7 +21,8 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       username,
       password,
       points: points || 0,
-      mindmap: mindmap || {}
+      state: '{}',
+      mindmap: '{}'
     });
 
     const savedUser = await newUser.save();
@@ -31,7 +32,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       id: savedUser._id,
       username: savedUser.username,
       points: savedUser.points,
-      mindmap: savedUser.mindmap,
       createdAt: savedUser.createdAt,
       updatedAt: savedUser.updatedAt
     };
@@ -269,7 +269,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       id: user._id,
       username: user.username,
       points: user.points,
-    //   mindmap: user.mindmap,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };

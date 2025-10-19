@@ -6,7 +6,8 @@ export interface IUser extends Document {
   username: string;
   password: string;
   points: number;
-  mindmap: Record<string, any>;
+  state: string;
+  mindmap: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -32,9 +33,13 @@ const userSchema = new Schema<IUser>({
     default: 0,
     min: [0, 'Points cannot be negative']
   },
-  mindmap: {
-    type: Schema.Types.Mixed,
-    default: {}
+  state: { // json encoded
+    type: String,
+    default: '{}'
+  },
+  mindmap: { // json encoded
+    type: String,
+    default: '{}'
   }
 }, {
   timestamps: true // Automatically adds createdAt and updatedAt
