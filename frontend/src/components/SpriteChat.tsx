@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './SpriteChat.css';
@@ -7,26 +7,70 @@ interface SpriteChatProps {
   spriteNumber: 1 | 2;
 }
 
+interface Message {
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
+}
+
 const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; timestamp: Date }>>([
-    { text: spriteNumber === 1 ? "Hello! I'm your math learning companion. Let's solve some problems together!" : "Welcome back! Ready to continue our math journey?", isUser: false, timestamp: new Date() }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [selectedTeacherSprite, setSelectedTeacherSprite] = useState<string>('teacher_base.png');
+  const [selectedStudentSprite, setSelectedStudentSprite] = useState<string>('student_base.png');
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const sprites = {
-    1: { emoji: '🧮', name: 'Calculator', color: '#3b82f6' },
-    2: { emoji: '📐', name: 'Geometry', color: '#10b981' }
-  };
+  const teacherSprites = [
+    'teacher_base.png',
+    'teacher_confused.png',
+    'teacher_explanation.png',
+    'teacher_pleased.png',
+    'teacher_talking_pawup.png',
+    'teacher_talking.png',
+    'teacher_weary.png'
+  ];
 
-  const currentSprite = sprites[spriteNumber];
+  const studentSprites = [
+    'student_base.png',
+    'student_nodesk.png'
+  ];
+
+  const currentSprites = spriteNumber === 1 ? teacherSprites : studentSprites;
+  const currentSelectedSprite = spriteNumber === 1 ? selectedTeacherSprite : selectedStudentSprite;
+
+  // Load saved messages for this page
+  useEffect(() => {
+    const savedMessages = localStorage.getItem(`sprite-chat-${spriteNumber}-messages`);
+    if (savedMessages) {
+      const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }));
+      setMessages(parsedMessages);
+    } else {
+      // Initialize with welcome message
+      const welcomeMessage: Message = {
+        text: spriteNumber === 1 
+          ? "Hello! I'm your math teacher. Let's solve some problems together!" 
+          : "Welcome back! Ready to continue our math journey?",
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, [spriteNumber]);
+
+  // Save messages whenever they change
+  useEffect(() => {
+    localStorage.setItem(`sprite-chat-${spriteNumber}-messages`, JSON.stringify(messages));
+  }, [messages, spriteNumber]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
 
-    const newMessage = {
+    const newMessage: Message = {
       text: message.trim(),
       isUser: true,
       timestamp: new Date()
@@ -37,15 +81,21 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
 
     // Simulate AI response
     setTimeout(() => {
-      const responses = [
+      const responses = spriteNumber === 1 ? [
         "That's a great question! Let me help you work through this step by step.",
         "I see what you're trying to solve. Here's how we can approach this problem...",
         "Excellent thinking! Now let's apply this concept to the next problem.",
         "You're on the right track! Let me show you an alternative method.",
         "Great work! This is exactly the kind of problem-solving we need for math success."
+      ] : [
+        "I understand! Let me work through this problem with you.",
+        "That's an interesting approach. Here's what I'm thinking...",
+        "I'm learning too! Let's figure this out together.",
+        "Good point! I see it differently though. What if we...",
+        "I'm getting confused. Can you explain that part again?"
       ];
       
-      const aiResponse = {
+      const aiResponse: Message = {
         text: responses[Math.floor(Math.random() * responses.length)],
         isUser: false,
         timestamp: new Date()
@@ -53,6 +103,14 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
       
       setMessages(prev => [...prev, aiResponse]);
     }, 1000);
+  };
+
+  const handleSpriteSelect = (spritePath: string) => {
+    if (spriteNumber === 1) {
+      setSelectedTeacherSprite(spritePath);
+    } else {
+      setSelectedStudentSprite(spritePath);
+    }
   };
 
   const handleLogout = () => {
@@ -64,7 +122,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     if (spriteNumber === 1) {
       navigate('/sprite-chat-2');
     } else {
-      // For sprite 2, we could go to a completion screen or restart
       navigate('/file-upload');
     }
   };
@@ -76,26 +133,28 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   };
 
   const handleRestart = () => {
+    // Clear messages for both pages
+    localStorage.removeItem('sprite-chat-1-messages');
+    localStorage.removeItem('sprite-chat-2-messages');
     navigate('/file-upload');
   };
 
   return (
     <div className="sprite-chat-container">
-      <header className="sprite-chat-header">
-        <h1>Meow4.me</h1>
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
-      </header>
-      
       <main className="sprite-chat-content">
         <div className="sprite-section">
-          <div 
-            className="sprite-display"
-            style={{ backgroundColor: `${currentSprite.color}20` }}
-          >
-            <div className="sprite-emoji">{currentSprite.emoji}</div>
-            <div className="sprite-name">{currentSprite.name}</div>
+          <div className="classroom-background">
+            <img 
+              src={`/assets/${currentSelectedSprite}`} 
+              alt={spriteNumber === 1 ? 'Teacher' : 'Student'} 
+              className="sprite-image"
+              style={{ transform: 'scale(4)' }}
+              onClick={() => {
+                const currentIndex = currentSprites.indexOf(currentSelectedSprite);
+                const nextIndex = (currentIndex + 1) % currentSprites.length;
+                handleSpriteSelect(currentSprites[nextIndex]);
+              }}
+            />
           </div>
         </div>
         
@@ -104,13 +163,10 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
             {messages.map((msg, index) => (
               <div 
                 key={index} 
-                className={`message ${msg.isUser ? 'user-message' : 'ai-message'}`}
+                className={`message-bubble ${msg.isUser ? 'user-message' : 'ai-message'}`}
               >
                 <div className="message-content">
                   {msg.text}
-                </div>
-                <div className="message-time">
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
             ))}
@@ -121,15 +177,16 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask me anything about math..."
+              placeholder={spriteNumber === 1 ? "Ask your teacher anything..." : "Share your thoughts..."}
               className="chat-input"
             />
             <button type="submit" className="send-button">
-              Send
+              ✈️
             </button>
           </form>
         </div>
       </main>
+      
       
       <div className="navigation-buttons">
         {spriteNumber === 2 && (

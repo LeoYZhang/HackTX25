@@ -1,115 +1,149 @@
 .sprite-chat-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  height: calc(100vh - 10px - 85px); /* Account for header height */
+  background: #a8e6cf; /* Light teal background */
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
-.sprite-chat-header {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem 2rem;
+.user-profile-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: #87CEEB;
+  border-radius: 50%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.sprite-chat-header h1 {
-  margin: 0;
-  color: #1e40af;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.logout-button {
-  background: #ed9594;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  justify-content: center;
+  font-size: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.logout-button:hover {
-  background: #db7a79;
-  transform: translateY(-1px);
+.user-profile-icon:hover {
+  transform: scale(1);
 }
 
 .sprite-chat-content {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  height: calc(100vh - 10px - 165px); /* Account for header + navigation buttons */
+  position: relative;
+  overflow: hidden;
 }
 
 .sprite-section {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #a8e6cf; /* Light teal top */
 }
 
-.sprite-display {
-  background: white;
-  border-radius: 20px;
-  padding: 3rem;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 3px solid;
-  animation: float 3s ease-in-out infinite;
+.classroom-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #a8e6cf 0%, #a8e6cf 60%, #696969 60%, #696969 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.blackboard {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 200px;
+  height: 120px;
+  background: #2d5016;
+  border: 8px solid #8B4513;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.sprite-emoji {
-  font-size: 6rem;
-  margin-bottom: 1rem;
-  display: block;
+.student-desk {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 60px;
+  background: #8B4513;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.sprite-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e40af;
+.student-desk::before {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 10px;
+  width: 8px;
+  height: 20px;
+  background: #8B4513;
+}
+
+.student-desk::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  right: 10px;
+  width: 8px;
+  height: 20px;
+  background: #8B4513;
+}
+
+.sprite-image {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 5;
+  position: relative;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.sprite-image:hover {
+  transform: scale(1);
 }
 
 .chat-section {
   display: flex;
   flex-direction: column;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  margin: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  border: 2px solid #ddd;
 }
 
 .chat-messages {
   flex: 1;
   padding: 1.5rem;
   overflow-y: auto;
-  max-height: 400px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  background: #f9f9f9;
 }
 
-.message {
+.message-bubble {
   display: flex;
-  flex-direction: column;
   max-width: 80%;
+  position: relative;
 }
 
 .user-message {
@@ -117,10 +151,23 @@
 }
 
 .user-message .message-content {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: #3b82f6;
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 12px 16px;
   border-radius: 18px 18px 4px 18px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-message .message-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid #3b82f6;
+  border-top: 8px solid transparent;
 }
 
 .ai-message {
@@ -128,60 +175,67 @@
 }
 
 .ai-message .message-content {
-  background: #f1f5f9;
-  color: #1e293b;
-  padding: 0.75rem 1rem;
+  background: white;
+  color: #333;
+  padding: 12px 16px;
   border-radius: 18px 18px 18px 4px;
-  border: 1px solid #e2e8f0;
+  border: 2px solid #ddd;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.message-time {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: 0.25rem;
-  align-self: flex-end;
-}
-
-.ai-message .message-time {
-  align-self: flex-start;
+.ai-message .message-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 8px;
+  width: 0;
+  height: 0;
+  border-right: 8px solid white;
+  border-top: 8px solid transparent;
 }
 
 .chat-input-form {
   display: flex;
   padding: 1rem;
-  border-top: 1px solid #e2e8f0;
+  background: white;
+  border-top: 2px solid #ddd;
   gap: 0.5rem;
 }
 
 .chat-input {
   flex: 1;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 20px;
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s ease;
+  background: #f9f9f9;
 }
 
 .chat-input:focus {
   border-color: #3b82f6;
+  background: white;
 }
 
 .send-button {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: #4CAF50;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 20px;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .send-button:hover {
+  background: #45a049;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
+
 
 .navigation-buttons {
   display: flex;
@@ -189,17 +243,20 @@
   gap: 1rem;
   padding: 1rem 2rem;
   background: white;
-  border-top: 1px solid #e2e8f0;
+  border-top: 2px solid #ddd;
+  flex-shrink: 0;
+  min-height: 80px;
 }
 
 .nav-button {
-  padding: 0.75rem 1.5rem;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .back-button {
@@ -223,40 +280,40 @@
 }
 
 .next-button {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #10b981;
   color: white;
 }
 
 .next-button:hover {
+  background: #059669;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 @media (max-width: 768px) {
+  .sprite-chat-container {
+    height: calc(100vh - 10px - 115px); /* Slightly less header height on mobile */
+  }
+  
   .sprite-chat-content {
     grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1rem;
+    height: calc(100vh - 10px - 190px); /* Account for header + navigation on mobile */
   }
   
-  .sprite-display {
-    padding: 2rem;
+  .sprite-section {
+    min-height: 200px;
   }
   
-  .sprite-emoji {
-    font-size: 4rem;
-  }
-  
-  .sprite-chat-header {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .sprite-image {
+    width: 120px;
+    height: 120px;
+    max-width: 90%;
+    max-height: 90%;
   }
   
   .navigation-buttons {
     flex-direction: column;
     align-items: center;
+    min-height: 100px;
   }
   
   .nav-button {
