@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ModalProvider } from './contexts/ModalContext';
 import Header from './components/Header';
 import LandingPage from './components/LandingPage';
 import FileUpload from './components/FileUpload';
@@ -12,46 +13,48 @@ import styles from './App.module.css';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className={styles['App']}>
-          <Header />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route 
-              path="/file-upload" 
-              element={
-                <ProtectedRoute>
-                  <FileUpload />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/sprite-chat-1" 
-              element={
-                <ProtectedRoute>
-                  <SpriteChat spriteNumber={1} />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/sprite-chat-2" 
-              element={
-                <ProtectedRoute>
-                  <SpriteChat spriteNumber={2} />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <UserProfile />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>            
-        </div>
-      </Router>
+      <ModalProvider>
+        <Router>
+          <div className={styles['App']}>
+            <Header />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route 
+                path="/file-upload" 
+                element={
+                  <ProtectedRoute>
+                    <FileUpload />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/sprite-chat-1" 
+                element={
+                  <ProtectedRoute>
+                    <SpriteChat spriteNumber={1} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/sprite-chat-2" 
+                element={
+                  <ProtectedRoute>
+                    <SpriteChat spriteNumber={2} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                } 
+              />
+            </Routes>            
+          </div>
+        </Router>
+      </ModalProvider>
     </AuthProvider>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useModal } from '../contexts/ModalContext';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { openProfileModal } = useModal();
   
   // Don't show header on landing page
   if (location.pathname === '/') {
@@ -26,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    openProfileModal();
   };
 
   return (
