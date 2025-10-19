@@ -7,13 +7,13 @@ import FileUpload from './components/FileUpload';
 import SpriteChat from './components/SpriteChat';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute';
-import './App.css';
+import styles from './App.module.css';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
+        <div className={styles['App']}>
           <Header />
           <Routes>
             <Route path="/" element={<LandingPage />} />

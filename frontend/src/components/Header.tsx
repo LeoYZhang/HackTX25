@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './Header.css';
+import styles from './Header.module.css';
 
 interface HeaderProps {
   showUserActions?: boolean;
@@ -30,18 +30,18 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
   };
 
   return (
-    <header className="app-header">
-      <div className="header-content">
-        <div className="logo-section" onClick={() => navigate('/')}>
-          <img src="/assets/logo.png" alt="educat logo" className="logo-icon"/>
-          <h1 className="app-title">edu<span className="logo-cat">cat</span></h1>
+    <header className={styles['app-header']}>
+      <div className={styles['header-content']}>
+        <div className={styles['logo-section']} onClick={() => navigate('/')}>
+          <img src="/assets/logo.png" alt="educat logo" className={styles['logo-icon']}/>
+          <h1 className={styles['app-title']}>edu<span className={styles['logo-cat']}>cat</span></h1>
         </div>
         
         {shouldShowUserActions && (
-          <div className="header-actions">
+          <div className={styles['header-actions']}>
             <button 
               onClick={handleProfileClick}
-              className="header-button profile-button"
+              className={`${styles['header-button']} ${styles['profile-button']}`}
               title="View Profile"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
             </button>
             <button 
               onClick={handleLogout}
-              className="header-button logout-button"
+              className={`${styles['header-button']} ${styles['logout-button']}`}
               title="Logout"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

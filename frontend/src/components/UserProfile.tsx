@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './UserProfile.css';
+import styles from './UserProfile.module.css';
 
 interface UserProfileData {
   id: string;
@@ -156,9 +156,9 @@ const UserProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="user-profile-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
+      <div className={styles['user-profile-container']}>
+        <div className={styles['loading-spinner']}>
+          <div className={styles['spinner']}></div>
           <p>Loading your profile...</p>
         </div>
       </div>
@@ -167,12 +167,12 @@ const UserProfile: React.FC = () => {
 
   if (!userData) {
     return (
-      <div className="user-profile-container">
-        <div className="error-state">
-          <div className="error-icon">⚠️</div>
+      <div className={styles['user-profile-container']}>
+        <div className={styles['error-state']}>
+          <div className={styles['error-icon']}>⚠️</div>
           <h2>Profile Not Found</h2>
           <p>We couldn't load your profile data.</p>
-          <button onClick={() => navigate('/login')} className="retry-button">
+          <button onClick={() => navigate('/login')} className={styles['retry-button']}>
             Go to Login
           </button>
         </div>
@@ -181,47 +181,47 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="user-profile-container">
+    <div className={styles['user-profile-container']}>
       {/* Main Content */}
-      <main className="profile-main">
-        <div className="profile-hero">
-          <div className="hero-content">
-            <div className="profile-avatar-section">
-              <div className="avatar-container">
-                <div className="avatar-ring"></div>
-                <div className="avatar-emoji">👨‍🎓</div>
-                <div className="avatar-badge">
-                  <span className="badge-text">Level {Math.floor(userData.points / 100) + 1}</span>
+      <main className={styles['profile-main']}>
+        <div className={styles['profile-hero']}>
+          <div className={styles['hero-content']}>
+            <div className={styles['profile-avatar-section']}>
+              <div className={styles['avatar-container']}>
+                <div className={styles['avatar-ring']}></div>
+                <div className={styles['avatar-emoji']}>👨‍🎓</div>
+                <div className={styles['avatar-badge']}>
+                  <span className={styles['badge-text']}>Level {Math.floor(userData.points / 100) + 1}</span>
                 </div>
               </div>
             </div>
             
-            <div className="profile-info">
-              <h2 className="profile-name">{userData.username}</h2>
-              <p className="profile-subtitle">Mathematics Student</p>
+            <div className={styles['profile-info']}>
+              <h2 className={styles['profile-name']}>{userData.username}</h2>
+              <p className={styles['profile-subtitle']}>Mathematics Student</p>
               
-              <div className="stats-grid">
-                <div className="stat-card points">
-                  <div className="stat-icon">🎯</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{userData.points}</div>
-                    <div className="stat-label">Points Earned</div>
+              <div className={styles['stats-grid']}>
+                <div className={`${styles['stat-card']} ${styles['points']}`}>
+                  <div className={styles['stat-icon']}>🎯</div>
+                  <div className={styles['stat-content']}>
+                    <div className={styles['stat-value']}>{userData.points}</div>
+                    <div className={styles['stat-label']}>Points Earned</div>
                   </div>
                 </div>
                 
-                <div className="stat-card streak">
-                  <div className="stat-icon">📈</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{Math.floor(Math.random() * 7) + 1}</div>
-                    <div className="stat-label">Day Streak</div>
+                <div className={`${styles['stat-card']} ${styles['streak']}`}>
+                  <div className={styles['stat-icon']}>📈</div>
+                  <div className={styles['stat-content']}>
+                    <div className={styles['stat-value']}>{Math.floor(Math.random() * 7) + 1}</div>
+                    <div className={styles['stat-label']}>Day Streak</div>
                   </div>
                 </div>
                 
-                <div className="stat-card member">
-                  <div className="stat-icon">📚</div>
-                  <div className="stat-content">
-                    <div className="stat-value">{new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                    <div className="stat-label">Member Since</div>
+                <div className={`${styles['stat-card']} ${styles['member']}`}>
+                  <div className={styles['stat-icon']}>📚</div>
+                  <div className={styles['stat-content']}>
+                    <div className={styles['stat-value']}>{new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                    <div className={styles['stat-label']}>Member Since</div>
                   </div>
                 </div>
               </div>
@@ -230,64 +230,64 @@ const UserProfile: React.FC = () => {
         </div>
 
         {/* Settings Section */}
-        <div className="settings-section">
-          <div className="settings-container">
-            <h3 className="settings-title">Account Settings</h3>
+        <div className={styles['settings-section']}>
+          <div className={styles['settings-container']}>
+            <h3 className={styles['settings-title']}>Account Settings</h3>
             
             {error && (
-              <div className="error-banner">
-                <span className="error-icon">⚠️</span>
-                <span className="error-text">{error}</span>
-                <button onClick={() => setError(null)} className="error-close">×</button>
+              <div className={styles['error-banner']}>
+                <span className={styles['error-icon']}>⚠️</span>
+                <span className={styles['error-text']}>{error}</span>
+                <button onClick={() => setError(null)} className={styles['error-close']}>×</button>
               </div>
             )}
             
-            <div className="settings-grid">
-              <div className="setting-card">
-                <div className="setting-header">
-                  <div className="setting-icon">🔐</div>
-                  <div className="setting-info">
+            <div className={styles['settings-grid']}>
+              <div className={styles['setting-card']}>
+                <div className={styles['setting-header']}>
+                  <div className={styles['setting-icon']}>🔐</div>
+                  <div className={styles['setting-info']}>
                     <h4>Password</h4>
                     <p>Update your account password</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setShowChangePassword(!showChangePassword)}
-                  className="setting-button"
+                  className={styles['setting-button']}
                   disabled={updating}
                 >
                   {showChangePassword ? 'Cancel' : 'Change Password'}
                 </button>
               </div>
 
-              <div className="setting-card">
-                <div className="setting-header">
-                  <div className="setting-icon">👤</div>
-                  <div className="setting-info">
+              <div className={styles['setting-card']}>
+                <div className={styles['setting-header']}>
+                  <div className={styles['setting-icon']}>👤</div>
+                  <div className={styles['setting-info']}>
                     <h4>Username</h4>
                     <p>Change your display name</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setShowChangeUsername(!showChangeUsername)}
-                  className="setting-button"
+                  className={styles['setting-button']}
                   disabled={updating}
                 >
                   {showChangeUsername ? 'Cancel' : 'Change Username'}
                 </button>
               </div>
 
-              <div className="setting-card">
-                <div className="setting-header">
-                  <div className="setting-icon">🗂️</div>
-                  <div className="setting-info">
+              <div className={styles['setting-card']}>
+                <div className={styles['setting-header']}>
+                  <div className={styles['setting-icon']}>🗂️</div>
+                  <div className={styles['setting-info']}>
                     <h4>Learning Data</h4>
                     <p>Clear your learning progress</p>
                   </div>
                 </div>
                 <button 
                   onClick={handleClearMindmap}
-                  className="setting-button danger"
+                  className={`${styles['setting-button']} ${styles['danger']}`}
                   disabled={updating}
                 >
                   Clear Learning Data
@@ -297,10 +297,10 @@ const UserProfile: React.FC = () => {
 
             {/* Forms */}
             {showChangePassword && (
-              <div className="form-container">
-                <form onSubmit={handleChangePassword} className="settings-form">
+              <div className={styles['form-container']}>
+                <form onSubmit={handleChangePassword} className={styles['settings-form']}>
                   <h4>Change Password</h4>
-                  <div className="form-group">
+                  <div className={styles['form-group']}>
                     <label htmlFor="newPassword">New Password</label>
                     <input
                       type="password"
@@ -312,7 +312,7 @@ const UserProfile: React.FC = () => {
                       minLength={6}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={styles['form-group']}>
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
                       type="password"
@@ -324,8 +324,8 @@ const UserProfile: React.FC = () => {
                       minLength={6}
                     />
                   </div>
-                  <div className="form-actions">
-                    <button type="submit" className="form-button primary" disabled={updating}>
+                  <div className={styles['form-actions']}>
+                    <button type="submit" className={`${styles['form-button']} ${styles['primary']}`} disabled={updating}>
                       {updating ? 'Updating...' : 'Update Password'}
                     </button>
                     <button 
@@ -336,7 +336,7 @@ const UserProfile: React.FC = () => {
                         setConfirmPassword('');
                         setError(null);
                       }}
-                      className="form-button secondary"
+                      className={`${styles['form-button']} ${styles['secondary']}`}
                     >
                       Cancel
                     </button>
@@ -346,10 +346,10 @@ const UserProfile: React.FC = () => {
             )}
             
             {showChangeUsername && (
-              <div className="form-container">
-                <form onSubmit={handleChangeUsername} className="settings-form">
+              <div className={styles['form-container']}>
+                <form onSubmit={handleChangeUsername} className={styles['settings-form']}>
                   <h4>Change Username</h4>
-                  <div className="form-group">
+                  <div className={styles['form-group']}>
                     <label htmlFor="newUsername">New Username</label>
                     <input
                       type="text"
@@ -362,8 +362,8 @@ const UserProfile: React.FC = () => {
                       maxLength={30}
                     />
                   </div>
-                  <div className="form-actions">
-                    <button type="submit" className="form-button primary" disabled={updating}>
+                  <div className={styles['form-actions']}>
+                    <button type="submit" className={`${styles['form-button']} ${styles['primary']}`} disabled={updating}>
                       {updating ? 'Updating...' : 'Update Username'}
                     </button>
                     <button 
@@ -373,7 +373,7 @@ const UserProfile: React.FC = () => {
                         setNewUsername(userData.username);
                         setError(null);
                       }}
-                      className="form-button secondary"
+                      className={`${styles['form-button']} ${styles['secondary']}`}
                     >
                       Cancel
                     </button>
@@ -386,14 +386,14 @@ const UserProfile: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="profile-footer">
-          <div className="footer-content">
-            <span className="footer-text">Built for HackTX25 • Empowering Math Education</span>
-            <div className="footer-links">
-              <button onClick={() => navigate('/file-upload')} className="footer-link">
+      <footer className={styles['profile-footer']}>
+          <div className={styles['footer-content']}>
+            <span className={styles['footer-text']}>Built for HackTX25 • Empowering Math Education</span>
+            <div className={styles['footer-links']}>
+              <button onClick={() => navigate('/file-upload')} className={styles['footer-link']}>
                 📁 Upload Files
               </button>
-              <button onClick={() => navigate('/sprite-chat-1')} className="footer-link">
+              <button onClick={() => navigate('/sprite-chat-1')} className={styles['footer-link']}>
                 🎓 Start Learning
               </button>
             </div>

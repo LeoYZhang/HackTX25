@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './LoginModal.css';
+import styles from './LoginModal.module.css';
 
 interface LoginFormData {
   username: string;
@@ -143,29 +143,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
   if (!isOpen) return null;
 
   return (
-    <div className="login-modal-overlay" onClick={onClose}>
-      <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="login-modal-header">
-          <div className="login-modal-logo">
-            <img src="/assets/logo.png" alt="educat logo" className="login-logo-icon"/>
-            <span className="login-logo-text">
-              <span className="login-logo-educat">edu</span>
+    <div className={styles['login-modal-overlay']} onClick={onClose}>
+      <div className={styles['login-modal-content']} onClick={(e) => e.stopPropagation()}>
+        <div className={styles['login-modal-header']}>
+          <div className={styles['login-modal-logo']}>
+            <img src="/assets/logo.png" alt="educat logo" className={styles['login-logo-icon']}/>
+            <span className={styles['login-logo-text']}>
+              <span className={styles['login-logo-educat']}>edu</span>
             </span>
           </div>
-          <button className="login-close-button" onClick={onClose}>×</button>
+          <button className={styles['login-close-button']} onClick={onClose}>×</button>
         </div>
         
-        <div className="login-modal-body">
-          <h1 className="login-modal-title">
+        <div className={styles['login-modal-body']}>
+          <h1 className={styles['login-modal-title']}>
             {isSignup ? 'create account' : 'welcome back!'}
           </h1>
-          <p className="login-modal-subtitle">
+          <p className={styles['login-modal-subtitle']}>
             {isSignup ? 'join the learning adventure' : 'ready to learn with cats?'}
           </p>
           
-          <form onSubmit={handleSubmit} className="login-modal-form">
-            <div className="form-group">
-              <label htmlFor="username" className="form-label">
+          <form onSubmit={handleSubmit} className={styles['login-modal-form']}>
+            <div className={styles['form-group']}>
+              <label htmlFor="username" className={styles['form-label']}>
                 Username
               </label>
               <input
@@ -174,14 +174,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
-                className="form-input"
+                className={styles['form-input']}
                 placeholder="Enter your username"
                 autoComplete="username"
               />
             </div>
             
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
+            <div className={styles['form-group']}>
+              <label htmlFor="password" className={styles['form-label']}>
                 Password
               </label>
               <input
@@ -190,15 +190,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="form-input"
+                className={styles['form-input']}
                 placeholder={isSignup ? "Create a password" : "Enter your password"}
                 autoComplete={isSignup ? "new-password" : "current-password"}
               />
             </div>
 
             {isSignup && (
-              <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label">
+              <div className={styles['form-group']}>
+                <label htmlFor="confirmPassword" className={styles['form-label']}>
                   Confirm Password
                 </label>
                 <input
@@ -207,7 +207,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="form-input"
+                  className={styles['form-input']}
                   placeholder="Confirm your password"
                   autoComplete="new-password"
                 />
@@ -215,22 +215,22 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
             )}
             
             {error && (
-              <div className="error-message">
+              <div className={styles['error-message']}>
                 {error}
               </div>
             )}
             
-            <button type="submit" className="login-modal-button" disabled={isLoading}>
+            <button type="submit" className={styles['login-modal-button']} disabled={isLoading}>
               {isLoading ? (isSignup ? 'Creating Account...' : 'Signing In...') : (isSignup ? 'Create Account' : 'Sign In')}
             </button>
 
-            <div className="toggle-mode">
+            <div className={styles['toggle-mode']}>
               <p>
                 {isSignup ? 'Already have an account?' : "Don't have an account?"}
                 <button
                   type="button"
                   onClick={toggleMode}
-                  className="toggle-button"
+                  className={styles['toggle-button']}
                 >
                   {isSignup ? 'Sign In' : 'Sign Up'}
                 </button>

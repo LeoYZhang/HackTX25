@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './SpriteChat.css';
+import styles from './SpriteChat.module.css';
 
 interface SpriteChatProps {
   spriteNumber: 1 | 2;
@@ -140,14 +140,14 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   };
 
   return (
-    <div className="sprite-chat-container">
-      <main className="sprite-chat-content">
-        <div className="sprite-section">
-          <div className="classroom-background">
+    <div className={styles['sprite-chat-container']}>
+      <main className={styles['sprite-chat-content']}>
+        <div className={styles['sprite-section']}>
+          <div className={styles['classroom-background']}>
             <img 
               src={`/assets/${currentSelectedSprite}`} 
               alt={spriteNumber === 1 ? 'Teacher' : 'Student'} 
-              className="sprite-image"
+              className={styles['sprite-image']}
               style={{ transform: 'scale(4)' }}
               onClick={() => {
                 const currentIndex = currentSprites.indexOf(currentSelectedSprite);
@@ -158,29 +158,29 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
           </div>
         </div>
         
-        <div className="chat-section">
-          <div className="chat-messages">
+        <div className={styles['chat-section']}>
+          <div className={styles['chat-messages']}>
             {messages.map((msg, index) => (
               <div 
                 key={index} 
-                className={`message-bubble ${msg.isUser ? 'user-message' : 'ai-message'}`}
+                className={`${styles['message-bubble']} ${msg.isUser ? styles['user-message'] : styles['ai-message']}`}
               >
-                <div className="message-content">
+                <div className={styles['message-content']}>
                   {msg.text}
                 </div>
               </div>
             ))}
           </div>
           
-          <form onSubmit={handleSendMessage} className="chat-input-form">
+          <form onSubmit={handleSendMessage} className={styles['chat-input-form']}>
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder={spriteNumber === 1 ? "Ask your teacher anything..." : "Share your thoughts..."}
-              className="chat-input"
+              className={styles['chat-input']}
             />
-            <button type="submit" className="send-button">
+            <button type="submit" className={styles['send-button']}>
               ✈️
             </button>
           </form>
@@ -188,18 +188,18 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
       </main>
       
       
-      <div className="navigation-buttons">
+      <div className={styles['navigation-buttons']}>
         {spriteNumber === 2 && (
-          <button onClick={handleBack} className="nav-button back-button">
+          <button onClick={handleBack} className={`${styles['nav-button']} ${styles['back-button']}`}>
             ← Back
           </button>
         )}
         
-        <button onClick={handleRestart} className="nav-button restart-button">
+        <button onClick={handleRestart} className={`${styles['nav-button']} ${styles['restart-button']}`}>
           🔄 Restart
         </button>
         
-        <button onClick={handleNext} className="nav-button next-button">
+        <button onClick={handleNext} className={`${styles['nav-button']} ${styles['next-button']}`}>
           {spriteNumber === 1 ? 'Next →' : 'Complete ✓'}
         </button>
       </div>

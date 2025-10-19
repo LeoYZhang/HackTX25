@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './FileUpload.css';
+import styles from './FileUpload.module.css';
 
 const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -34,31 +34,31 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div className="file-upload-container">
-      <main className="file-upload-content">
-        <div className="upload-card">
+    <div className={styles['file-upload-container']}>
+      <main className={styles['file-upload-content']}>
+        <div className={styles['upload-card']}>
           <h2>upload your questions</h2>
           <p>please upload a file containing a problem set to begin learning!</p>
           
-          <div className="upload-area">
+          <div className={styles['upload-area']}>
             <input
               type="file"
               id="file-input"
               accept=".txt,.pdf,.doc,.docx"
               onChange={handleFileChange}
-              className="file-input"
+              className={styles['file-input']}
             />
-            <label htmlFor="file-input" className="file-label">
+            <label htmlFor="file-input" className={styles['file-label']}>
               {selectedFile ? (
-                <div className="file-selected">
-                  <span className="file-icon">📄</span>
-                  <span className="file-name">{selectedFile.name}</span>
+                <div className={styles['file-selected']}>
+                  <span className={styles['file-icon']}>📄</span>
+                  <span className={styles['file-name']}>{selectedFile.name}</span>
                 </div>
               ) : (
-                <div className="file-placeholder">
-                  <span className="upload-icon-large">📁</span>
+                <div className={styles['file-placeholder']}>
+                  <span className={styles['upload-icon-large']}>📁</span>
                   <span>click to select a file</span>
-                  <span className="file-types">supports: .txt, .pdf, .doc, .docx</span>
+                  <span className={styles['file-types']}>supports: .txt, .pdf, .doc, .docx</span>
                 </div>
               )}
             </label>
@@ -66,7 +66,7 @@ const FileUpload: React.FC = () => {
           
           <button 
             onClick={handleUpload} 
-            className="upload-button"
+            className={styles['upload-button']}
             disabled={!selectedFile || isUploading}
           >
             {isUploading ? 'processing...' : 'start learning'}

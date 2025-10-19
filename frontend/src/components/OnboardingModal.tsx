@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './OnboardingModal.css';
+import styles from './OnboardingModal.module.css';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -68,48 +68,48 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose, onSi
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">Welcome to educat!</h2>
-          <button className="close-button" onClick={onClose}>×</button>
+    <div className={styles['modal-overlay']} onClick={onClose}>
+      <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
+        <div className={styles['modal-header']}>
+          <h2 className={styles['modal-title']}>Welcome to educat!</h2>
+          <button className={styles['close-button']} onClick={onClose}>×</button>
         </div>
         
-        <div className="modal-body">
-          <div className="image-container">
+        <div className={styles['modal-body']}>
+          <div className={styles['image-container']}>
             <img 
               src={steps[currentStep].image} 
               alt={`Step ${currentStep + 1}`}
-              className="step-image"
+              className={styles['step-image']}
             />
           </div>
           
-          <div className="caption-container">
-            <p className="step-caption">{steps[currentStep].caption}</p>
+          <div className={styles['caption-container']}>
+            <p className={styles['step-caption']}>{steps[currentStep].caption}</p>
           </div>
           
-          <div className="progress-indicators">
+          <div className={styles['progress-indicators']}>
             {steps.map((_, index) => (
               <div 
                 key={index}
-                className={`progress-dot ${index === currentStep ? 'active' : ''}`}
+                className={`${styles['progress-dot']} ${index === currentStep ? styles['active'] : ''}`}
                 onClick={() => setCurrentStep(index)}
               />
             ))}
           </div>
         </div>
         
-        <div className="modal-footer">
-          <div className="button-group">
+        <div className={styles['modal-footer']}>
+          <div className={styles['button-group']}>
             {(
-              <button className="nav-button previous" onClick={handlePrevious}>
+              <button className={`${styles['nav-button']} ${styles['previous']}`} onClick={handlePrevious}>
                 Previous
               </button>
             )}
-            <button className="nav-button skip" onClick={handleSkip}>
+            <button className={`${styles['nav-button']} ${styles['skip']}`} onClick={handleSkip}>
               Skip
             </button>
-            <button className="nav-button next" onClick={handleNext}>
+            <button className={`${styles['nav-button']} ${styles['next']}`} onClick={handleNext}>
               {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
             </button>
           </div>
