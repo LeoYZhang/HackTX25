@@ -134,8 +134,8 @@
   top: 50%;
   right: 100px;
   transform: translateY(-50%);
-  width: 600px;
-  height: 700px;
+  width: 80vh;
+  height: 75vh;
   display: flex;
   flex-direction: column;
   background: #f5f5f5;
@@ -290,11 +290,26 @@
   transform: translateY(-1px);
 }
 
+.restart-button {
+  background: #5192c8;
+  color: white;
+}
+
+.restart-button:hover {
+  background: #3a82bd;
+  transform: translateY(-1px);
+}
+
 .next-button {
   background: var(--primary-blue);
   border-radius: 20px;
   font-family: 'Roboto Mono', monospace;
   color: white;
+}
+
+.next-button:hover {
+  background: #3a82bd;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {

@@ -16,12 +16,15 @@ interface Message {
 const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNextLoading, setIsNextLoading] = useState(false);
+  const [canSendMessage, setCanSendMessage] = useState(true);
   const [selectedTeacherSprite, setSelectedTeacherSprite] = useState<string>('teacher_base.png');
   const [selectedStudentSprite, setSelectedStudentSprite] = useState<string>('student_base.png');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const teacherSprites = [
     'teacher_base.png',
@@ -48,29 +51,13 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     // Initialize with initial message from upload or default welcome message
     const welcomeMessage: Message = {
       text: savedMessageText || (spriteNumber === 1 
-        ? "Hello! I'm your math teacher. Let's solve some problems together!" 
-        : "Welcome back! Ready to continue our math journey?"),
+        ? "Can you explain the problem to me?" 
+        : "Can you explain your solution to me?"),
       isUser: false,
       timestamp: new Date()
     };
     setMessages([welcomeMessage]);
-  }, [spriteNumber, location.state, navigate, location.pathname]);
-
-  // Check for stored initial message on component mount (handles page reloads)
-  useEffect(() => {
-    const storedInitialMessage = localStorage.getItem(`sprite-chat-${spriteNumber}-initial-message`);
-    const savedMessages = localStorage.getItem(`sprite-chat-${spriteNumber}-messages`);
-    
-    // If there's a stored initial message and no saved messages, use the initial message
-    if (storedInitialMessage && !savedMessages) {
-      const initialMessage: Message = {
-        text: storedInitialMessage,
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages([initialMessage]);
-    }
-  }, [spriteNumber]);
+  }, [spriteNumber, navigate]);
 
   // Save messages whenever they change
   useEffect(() => {
@@ -93,9 +80,25 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     }
   }, []);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  // Reset textarea height when message is cleared
+  useEffect(() => {
+    if (message === '' && textareaRef.current) {
+      textareaRef.current.style.height = '46px';
+      textareaRef.current.style.overflowY = 'hidden';
+    }
+  }, [message]);
+
+  // Ensure textarea starts with correct height
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '46px';
+      textareaRef.current.style.overflowY = 'hidden';
+    }
+  }, []);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || isLoading || !canSendMessage) return;
 
     const newMessage: Message = {
       text: message.trim(),
@@ -104,32 +107,69 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     };
 
     setMessages(prev => [...prev, newMessage]);
+    const userMessage = message.trim();
     setMessage('');
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = spriteNumber === 1 ? [
-        "That's a great question! Let me help you work through this step by step.",
-        "I see what you're trying to solve. Here's how we can approach this problem...",
-        "Excellent thinking! Now let's apply this concept to the next problem.",
-        "You're on the right track! Let me show you an alternative method.",
-        "Great work! This is exactly the kind of problem-solving we need for math success."
-      ] : [
-        "I understand! Let me work through this problem with you.",
-        "That's an interesting approach. Here's what I'm thinking...",
-        "I'm learning too! Let's figure this out together.",
-        "Good point! I see it differently though. What if we...",
-        "I'm getting confused. Can you explain that part again?"
-      ];
-      
-      const aiResponse: Message = {
-        text: responses[Math.floor(Math.random() * responses.length)],
+    try {
+      if (user) {
+        const endpoint = spriteNumber === 1 ? 'teacher-cat-message' : 'student-cat-message';
+        // Send message to teacher cat API
+        const response = await fetch(`http://localhost:5001/api/actions/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: user.username,
+            message: userMessage
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const aiResponse: Message = {
+            text: result.message,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiResponse]);
+          
+          // Check if teacher mode is done
+          if (result.done) {
+            if (spriteNumber === 1) {
+              setCanSendMessage(false);
+              // Redirect to sprite-chat-2 after 3 seconds
+              setTimeout(() => {
+                navigate('/sprite-chat-2');
+                setCanSendMessage(true);
+              }, 3000);
+            } else {
+              alert("Student mode is done");
+            }
+          }
+        } else {
+          // Handle API error
+          const errorResponse: Message = {
+            text: "Sorry, I encountered an error. Please try again.",
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, errorResponse]);
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorResponse: Message = {
+        text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
         timestamp: new Date()
       };
-      
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -185,11 +225,55 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     navigate('/');
   };
 
-  const handleNext = () => {
-    if (spriteNumber === 1) {
-      navigate('/sprite-chat-2');
-    } else {
+  const handleNext = async () => {
+    if (spriteNumber === 1 && user) {
+      setIsNextLoading(true);
+      try {
+        // Send request to teacher-cat-done endpoint
+        const response = await fetch('http://localhost:5001/api/actions/teacher-cat-done', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: user.username,
+            isDone: true
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const aiResponse: Message = {
+            text: result.message,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiResponse]);
+          // Navigate to sprite-chat-2 after successful API call
+          setCanSendMessage(false);
+          // Redirect to sprite-chat-2 after 3 seconds
+          setTimeout(() => {
+            navigate('/sprite-chat-2');
+            setCanSendMessage(true);
+          }, 3000);
+        } else {
+          console.error('Failed to complete teacher mode:', result.message);
+          // Still navigate even if API fails, but log the error
+          navigate('/sprite-chat-2');
+        }
+      } catch (error) {
+        console.error('Error completing teacher mode:', error);
+        // Still navigate even if API fails, but log the error
+        navigate('/sprite-chat-2');
+      } finally {
+        setIsNextLoading(false);
+      }
+    } else if (spriteNumber === 2) {
       navigate('/file-upload');
+    } else {
+      // Fallback for when no user is available
+      navigate('/sprite-chat-2');
     }
   };
 
@@ -208,7 +292,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     navigate('/file-upload');
   };
 
-  return (
+return (
     <div className={styles['sprite-chat-container']}>
       <main className={styles['sprite-chat-content']}>
         <div className={styles['sprite-section']}>
@@ -255,6 +339,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
               placeholder={spriteNumber === 1 ? "" : ""}
               className={styles['chat-input']}
               rows={1}
+              disabled={isLoading || !canSendMessage}
             />
             <button type="submit" className={styles['send-button']}>
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="110" height="109">
