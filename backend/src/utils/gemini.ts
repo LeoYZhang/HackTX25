@@ -162,4 +162,72 @@ export class ChatSession {
   updateOptions(newOptions: GeminiQueryOptions): void {
     this.options = { ...this.options, ...newOptions };
   }
+
+  /**
+   * Get the current options for this session
+   */
+  getOptions(): GeminiQueryOptions {
+    return { ...this.options };
+  }
+
+  /**
+   * Serialize the chat session to a JSON string
+   */
+  serialize(): string {
+    const sessionData = {
+      messages: this.getHistory(),
+      options: this.getOptions()
+    };
+    return JSON.stringify(sessionData);
+  }
+
+  /**
+   * Restore messages to the session (internal method for deserialization)
+   */
+  private restoreMessages(messages: ConversationMessage[]): void {
+    this.messages = [...messages];
+  }
+
+  /**
+   * Create a new ChatSession from serialized data
+   */
+  static deserialize(serializedData: string): ChatSession {
+    const sessionData = JSON.parse(serializedData);
+    const session = new ChatSession(sessionData.options);
+    
+    // Restore the messages array
+    if (sessionData.messages && Array.isArray(sessionData.messages)) {
+      session.restoreMessages(sessionData.messages);
+    }
+    
+    return session;
+  }
+}
+
+/**
+ * Serialize a ChatSession to a JSON string
+ * @param session The ChatSession to serialize
+ * @returns JSON string representation of the session
+ */
+export function serializeChatSession(session: ChatSession): string {
+  return session.serialize();
+}
+
+/**
+ * Deserialize a ChatSession from a JSON string
+ * @param serializedData JSON string representation of the session
+ * @returns Restored ChatSession instance
+ */
+export function deserializeChatSession(serializedData: string): ChatSession {
+  return ChatSession.deserialize(serializedData);
+}
+
+/**
+ * Create a deep copy of a ChatSession
+ * @param session The ChatSession to clone
+ * @returns A new ChatSession with the same state
+ */
+export function cloneChatSession(session: ChatSession): ChatSession {
+  const serialized = session.serialize();
+  return deserializeChatSession(serialized);
 }
