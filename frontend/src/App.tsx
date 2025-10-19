@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import FileUpload from './components/FileUpload';
 import SpriteChat from './components/SpriteChat';
@@ -13,6 +14,7 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route 
               path="/file-upload" 
@@ -38,7 +40,6 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
       </Router>

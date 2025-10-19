@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './Login.css';
 
@@ -22,6 +22,7 @@ interface LoginResponse {
 }
 
 const Login: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [isSignup, setIsSignup] = useState<boolean>(false);
   const [formData, setFormData] = useState<LoginFormData>({
     username: '',
@@ -32,6 +33,16 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Check URL parameters to set initial mode
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    if (mode === 'signup') {
+      setIsSignup(true);
+    } else if (mode === 'login') {
+      setIsSignup(false);
+    }
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
