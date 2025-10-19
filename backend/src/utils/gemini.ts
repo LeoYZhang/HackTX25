@@ -87,3 +87,79 @@ export async function queryGeminiWithFile(
 
   return res.text?.trim() ?? "";
 }
+
+/**
+ * Interface for conversation messages
+ */
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+/**
+ * Chat session class that maintains conversation context
+ */
+export class ChatSession {
+  private messages: ConversationMessage[] = [];
+  private options: GeminiQueryOptions;
+
+  constructor(options: GeminiQueryOptions = {}) {
+    this.options = options;
+  }
+
+  /**
+   * Send a message and get a response from Gemini with full conversation context
+   */
+  async sendMessage(content: string, additionalOptions: GeminiQueryOptions = {}): Promise<string> {
+    // Add user message to conversation history
+    this.messages.push({ role: 'user', content });
+    
+    // Merge options
+    const mergedOptions = { ...this.options, ...additionalOptions };
+    
+    // Convert conversation history to Gemini's expected format
+    const contents = this.messages.map(msg => 
+      createUserContent([{ text: msg.content }])
+    );
+    
+    const res = await ai.models.generateContent({
+      model: mergedOptions.model || "gemini-2.5-flash-lite",
+      contents
+    });
+    
+    const response = res.text?.trim() ?? "";
+    
+    // Add assistant response to conversation history
+    this.messages.push({ role: 'assistant', content: response });
+    
+    return response;
+  }
+
+  /**
+   * Get the current conversation history
+   */
+  getHistory(): ConversationMessage[] {
+    return [...this.messages];
+  }
+
+  /**
+   * Clear the conversation history
+   */
+  clearHistory(): void {
+    this.messages = [];
+  }
+
+  /**
+   * Get the number of messages in the conversation
+   */
+  getMessageCount(): number {
+    return this.messages.length;
+  }
+
+  /**
+   * Update the default options for this session
+   */
+  updateOptions(newOptions: GeminiQueryOptions): void {
+    this.options = { ...this.options, ...newOptions };
+  }
+}
