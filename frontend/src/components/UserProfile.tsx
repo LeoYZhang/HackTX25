@@ -17,6 +17,8 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showChangeUsername, setShowChangeUsername] = useState(false);
+  const [showClearMindmap, setShowClearMindmap] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newUsername, setNewUsername] = useState('');
@@ -40,6 +42,10 @@ const UserProfile: React.FC = () => {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentPassword) {
+      setError('Current password is required');
+      return;
+    }
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -53,21 +59,22 @@ const UserProfile: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+      const response = await fetch(`http://localhost:5001/api/users/${user?.id}/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          password: newPassword
+          currentPassword: currentPassword,
+          newPassword: newPassword
         }),
       });
 
       if (response.ok) {
         setShowChangePassword(false);
+        setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        alert('Password updated successfully!');
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to update password');
@@ -81,6 +88,10 @@ const UserProfile: React.FC = () => {
 
   const handleChangeUsername = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentPassword) {
+      setError('Current password is required');
+      return;
+    }
     if (newUsername === user?.username) {
       setError('New username must be different from current username');
       return;
@@ -94,13 +105,14 @@ const UserProfile: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+      const response = await fetch(`http://localhost:5001/api/users/${user?.id}/username`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: newUsername
+          newUsername: newUsername,
+          currentPassword: currentPassword
         }),
       });
 
@@ -108,9 +120,9 @@ const UserProfile: React.FC = () => {
         const updatedUser = await response.json();
         setUserData(updatedUser.data);
         setShowChangeUsername(false);
-        alert('Username updated successfully! Please log in again.');
+        setCurrentPassword('');
         logout();
-        navigate('/login');
+        navigate('/');
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to update username');
@@ -122,27 +134,24 @@ const UserProfile: React.FC = () => {
     }
   };
 
-  const handleClearMindmap = async () => {
-    if (!window.confirm('Are you sure you want to clear your mindmap? This action cannot be undone.')) {
-      return;
-    }
+  const handleClearMindmap = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     setUpdating(true);
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:5001/api/users/${user?.id}/mindmap`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          mindmap: {}
-        }),
       });
 
       if (response.ok) {
-        alert('Mindmap cleared successfully!');
+        const result = await response.json();
+        setUserData(result.data);
+        setShowClearMindmap(false);
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to clear mindmap');
@@ -286,11 +295,11 @@ const UserProfile: React.FC = () => {
                   </div>
                 </div>
                 <button 
-                  onClick={handleClearMindmap}
+                  onClick={() => setShowClearMindmap(!showClearMindmap)}
                   className={`${styles['setting-button']} ${styles['danger']}`}
                   disabled={updating}
                 >
-                  Clear Learning Data
+                  {showClearMindmap ? 'Cancel' : 'Clear Learning Data'}
                 </button>
               </div>
             </div>
@@ -300,6 +309,17 @@ const UserProfile: React.FC = () => {
               <div className={styles['form-container']}>
                 <form onSubmit={handleChangePassword} className={styles['settings-form']}>
                   <h4>Change Password</h4>
+                  <div className={styles['form-group']}>
+                    <label htmlFor="currentPassword">Current Password</label>
+                    <input
+                      type="password"
+                      id="currentPassword"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      required
+                    />
+                  </div>
                   <div className={styles['form-group']}>
                     <label htmlFor="newPassword">New Password</label>
                     <input
@@ -332,6 +352,7 @@ const UserProfile: React.FC = () => {
                       type="button" 
                       onClick={() => {
                         setShowChangePassword(false);
+                        setCurrentPassword('');
                         setNewPassword('');
                         setConfirmPassword('');
                         setError(null);
@@ -349,6 +370,17 @@ const UserProfile: React.FC = () => {
               <div className={styles['form-container']}>
                 <form onSubmit={handleChangeUsername} className={styles['settings-form']}>
                   <h4>Change Username</h4>
+                  <div className={styles['form-group']}>
+                    <label htmlFor="currentPasswordUsername">Current Password</label>
+                    <input
+                      type="password"
+                      id="currentPasswordUsername"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      required
+                    />
+                  </div>
                   <div className={styles['form-group']}>
                     <label htmlFor="newUsername">New Username</label>
                     <input
@@ -370,7 +402,46 @@ const UserProfile: React.FC = () => {
                       type="button" 
                       onClick={() => {
                         setShowChangeUsername(false);
+                        setCurrentPassword('');
                         setNewUsername(userData.username);
+                        setError(null);
+                      }}
+                      className={`${styles['form-button']} ${styles['secondary']}`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {showClearMindmap && (
+              <div className={styles['form-container']}>
+                <form onSubmit={handleClearMindmap} className={styles['settings-form']}>
+                  <h4>Clear Learning Data</h4>
+                  <div className={styles['form-group']}>
+                    <div className={styles['warning-message']}>
+                      <div className={styles['warning-icon']}>⚠️</div>
+                      <div className={styles['warning-content']}>
+                        <h5>This action cannot be undone!</h5>
+                        <p>Clearing your learning data will permanently remove all your mindmap progress, including:</p>
+                        <ul>
+                          <li>All saved learning nodes and connections</li>
+                          <li>Your current learning state</li>
+                          <li>Any progress tracking data</li>
+                        </ul>
+                        <p><strong>Are you absolutely sure you want to proceed?</strong></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles['form-actions']}>
+                    <button type="submit" className={`${styles['form-button']} ${styles['danger']}`} disabled={updating}>
+                      {updating ? 'Clearing...' : 'Yes, Clear All Data'}
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setShowClearMindmap(false);
                         setError(null);
                       }}
                       className={`${styles['form-button']} ${styles['secondary']}`}

@@ -287,3 +287,185 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
+// Change username
+export const changeUsername = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { newUsername, currentPassword } = req.body;
+
+    if (!newUsername || !currentPassword) {
+      res.status(400).json({
+        success: false,
+        message: 'New username and current password are required'
+      });
+      return;
+    }
+
+    // Find user and include password for verification
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
+    }
+
+    // Verify current password
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+      return;
+    }
+
+    // Check if new username already exists
+    const usernameExists = await User.findOne({ username: newUsername, _id: { $ne: id } });
+    if (usernameExists) {
+      res.status(400).json({
+        success: false,
+        message: 'Username already exists'
+      });
+      return;
+    }
+
+    // Update username
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { username: newUsername },
+      { new: true, runValidators: true }
+    );
+
+    // Remove password from response
+    const userResponse = {
+      id: updatedUser!._id,
+      username: updatedUser!.username,
+      points: updatedUser!.points,
+      createdAt: updatedUser!.createdAt,
+      updatedAt: updatedUser!.updatedAt
+    };
+
+    res.status(200).json({
+      success: true,
+      message: 'Username changed successfully',
+      data: userResponse
+    });
+  } catch (error) {
+    console.error('Error changing username:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// Change password
+export const changePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required'
+      });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+      return;
+    }
+
+    // Find user and include password for verification
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
+    }
+
+    // Verify current password
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+      return;
+    }
+
+    // Update password (will be hashed automatically by the pre-save middleware)
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// Clear mindmap
+export const clearMindmap = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    // Check if user exists
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
+    }
+
+    // Clear mindmap by setting it to empty JSON object
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { mindmap: '{}' },
+      { new: true, runValidators: true }
+    );
+
+    // Remove password from response
+    const userResponse = {
+      id: updatedUser!._id,
+      username: updatedUser!.username,
+      points: updatedUser!.points,
+      mindmap: updatedUser!.mindmap,
+      createdAt: updatedUser!.createdAt,
+      updatedAt: updatedUser!.updatedAt
+    };
+
+    res.status(200).json({
+      success: true,
+      message: 'Mindmap cleared successfully',
+      data: userResponse
+    });
+  } catch (error) {
+    console.error('Error clearing mindmap:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
