@@ -224,6 +224,11 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
                 handleSpriteSelect(currentSprites[nextIndex]);
               }}
             />
+            {spriteNumber === 1 && (
+              <button onClick={handleNext} className={`${styles['nav-button']} ${styles['next-button']} ${styles['sprite-next-button']}`}>
+                Continue to teaching stage
+              </button>
+            )}
           </div>
         </div>
         
@@ -261,23 +266,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
           </form>
         </div>
       </main>
-      
-      
-      <div className={styles['navigation-buttons']}>
-        {spriteNumber === 2 && (
-          <button onClick={handleBack} className={`${styles['nav-button']} ${styles['back-button']}`}>
-            ← Back
-          </button>
-        )}
-        
-        <button onClick={handleRestart} className={`${styles['nav-button']} ${styles['restart-button']}`}>
-          🔄 Restart
-        </button>
-        
-        <button onClick={handleNext} className={`${styles['nav-button']} ${styles['next-button']}`}>
-          {spriteNumber === 1 ? 'Next →' : 'Complete ✓'}
-        </button>
-      </div>
     </div>
   );
 };

@@ -31,6 +31,19 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
     openProfileModal();
   };
 
+  const handleRestart = () => {
+    // Only restart if we're on sprite chat pages
+    if (location.pathname === '/sprite-chat-1' || location.pathname === '/sprite-chat-2') {
+      // Clear messages and initial messages for both pages
+      localStorage.removeItem('sprite-chat-1-messages');
+      localStorage.removeItem('sprite-chat-2-messages');
+      localStorage.removeItem('sprite-chat-1-initial-message');
+      localStorage.removeItem('sprite-chat-2-initial-message');
+      navigate('/file-upload');
+    }
+    // On other pages (like file upload), this is a no-op
+  };
+
   return (
     <header className={styles['app-header']}>
       <div className={styles['header-content']}>
@@ -41,6 +54,18 @@ const Header: React.FC<HeaderProps> = ({ showUserActions }) => {
         
         {shouldShowUserActions && (
           <div className={styles['header-actions']}>
+            <button 
+              onClick={handleRestart}
+              className={`${styles['header-button']} ${styles['restart-button']}`}
+              title="Restart Session"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M3 21v-5h5"/>
+              </svg>
+            </button>
             <button 
               onClick={handleProfileClick}
               className={`${styles['header-button']} ${styles['profile-button']}`}

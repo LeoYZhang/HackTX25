@@ -1,11 +1,12 @@
 .sprite-chat-container {
-  height: calc(100vh - 1px - 85px); /* Account for header height */
+  height: calc(100vh - 2px - 85px); /* Account for header height */
   background: #a8e6cf; /* Light teal background */
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
 }
+
 
 .user-profile-icon {
   position: absolute;
@@ -120,6 +121,14 @@
   transform: scale(1);
 }
 
+.sprite-next-button {
+  position: absolute;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%) translateX(-350px);
+  z-index: 10;
+}
+
 .chat-section {
   position: absolute;
   top: 50%;
@@ -164,7 +173,7 @@
   background: #3b82f6;
   color: white;
   padding: 12px 16px;
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 18px;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   word-wrap: break-word;
@@ -172,16 +181,6 @@
   white-space: pre-wrap;
 }
 
-.user-message .message-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  right: 8px;
-  width: 0;
-  height: 0;
-  border-left: 8px solid #3b82f6;
-  border-top: 8px solid transparent;
-}
 
 .ai-message {
   align-self: flex-start;
@@ -191,7 +190,7 @@
   background: white;
   color: #333;
   padding: 12px 16px;
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 18px;
   border: 2px solid #ddd;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -200,16 +199,6 @@
   white-space: pre-wrap;
 }
 
-.ai-message .message-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 8px;
-  width: 0;
-  height: 0;
-  border-right: 8px solid white;
-  border-top: 8px solid transparent;
-}
 
 .chat-input-form {
   display: flex;
@@ -279,16 +268,6 @@
 }
 
 
-.navigation-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  background: white;
-  border-top: 2px solid #ddd;
-  flex-shrink: 0;
-  min-height: 80px;
-}
 
 .nav-button {
   padding: 12px 24px;
@@ -311,24 +290,11 @@
   transform: translateY(-1px);
 }
 
-.restart-button {
-  background: #f59e0b;
-  color: white;
-}
-
-.restart-button:hover {
-  background: #d97706;
-  transform: translateY(-1px);
-}
-
 .next-button {
-  background: #10b981;
+  background: var(--primary-blue);
+  border-radius: 20px;
+  font-family: 'Roboto Mono', monospace;
   color: white;
-}
-
-.next-button:hover {
-  background: #059669;
-  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
@@ -363,14 +329,4 @@
     z-index: 20;
   }
   
-  .navigation-buttons {
-    flex-direction: column;
-    align-items: center;
-    min-height: 100px;
-  }
-  
-  .nav-button {
-    width: 100%;
-    max-width: 200px;
-  }
 }
