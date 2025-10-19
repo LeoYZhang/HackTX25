@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
 * {
+    font-family: 'Roboto Mono';
     box-sizing: border-box;
   }
   
@@ -7,7 +10,7 @@ body {
   font-family: 'Roboto Mono', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: #fefefe
 }
   
   .App {
@@ -21,7 +24,7 @@ body {
 
   /* Global educational theme styles */
   .educational-gradient {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    background: #fefefe
   }
 
   .primary-blue {

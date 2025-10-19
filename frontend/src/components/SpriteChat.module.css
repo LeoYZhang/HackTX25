@@ -312,22 +312,22 @@
 }
 
 .restart-button {
-  background: #f59e0b;
+  background: #5192c8;
   color: white;
 }
 
 .restart-button:hover {
-  background: #d97706;
+  background: #3a82bd;
   transform: translateY(-1px);
 }
 
 .next-button {
-  background: #10b981;
+  background: #5192c8;
   color: white;
 }
 
 .next-button:hover {
-  background: #059669;
+  background: #3a82bd;
   transform: translateY(-1px);
 }
 

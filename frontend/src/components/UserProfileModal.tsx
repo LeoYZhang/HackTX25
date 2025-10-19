@@ -175,12 +175,12 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
     <div className={styles['modal-overlay']} onClick={onClose}>
       <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
         <div className={styles['modal-header']}>
-          <h2>Profile</h2>
+          <h2>profile</h2>
           <button onClick={onClose} className={styles['close-button']}>×</button>
         </div>
 
         {loading ? (
-          <div className={styles['loading']}>Loading...</div>
+          <div className={styles['loading']}>loading...</div>
         ) : userData ? (
           <div className={styles['modal-body']}>
             {/* Profile Info */}
@@ -212,17 +212,17 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
 
             {/* Forms */}
             <form onSubmit={handleChangeUsername} className={styles['form']}>
-              <h4>Change Username</h4>
+              <h4>change username</h4>
               <input
                 type="password"
-                placeholder="Current Password"
+                placeholder="current password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
               />
               <input
                 type="text"
-                placeholder="New Username"
+                placeholder="new username"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
                 required
@@ -230,24 +230,24 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
               />
               <div className={styles['form-actions']}>
                 <button type="submit" disabled={updating}>
-                  {updating ? 'Updating...' : 'Update Username'}
+                  {updating ? 'updating...' : 'update username'}
                 </button>
-                <button type="button" onClick={resetForms}>Reset</button>
+                <button type="button" onClick={resetForms}>reset</button>
               </div>
             </form>
 
             <form onSubmit={handleChangePassword} className={styles['form']}>
-              <h4>Change Password</h4>
+              <h4>change password</h4>
               <input
                 type="password"
-                placeholder="Current Password"
+                placeholder="current password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
               />
               <input
                 type="password"
-                placeholder="New Password"
+                placeholder="new password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
@@ -255,7 +255,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
               />
               <input
                 type="password"
-                placeholder="Confirm Password"
+                placeholder="confirm password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -263,25 +263,25 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
               />
               <div className={styles['form-actions']}>
                 <button type="submit" disabled={updating}>
-                  {updating ? 'Updating...' : 'Update Password'}
+                  {updating ? 'updating...' : 'update password'}
                 </button>
-                <button type="button" onClick={resetForms}>Reset</button>
+                <button type="button" onClick={resetForms}>reset</button>
               </div>
             </form>
 
             <form onSubmit={handleClearCache} className={styles['form']}>
-              <h4>Clear Cache</h4>
-              <p>This will permanently delete all your learning progress.</p>
+              <h4>clear cache</h4>
+              <p>this will permanently delete all your learning progress.</p>
               <div className={styles['form-actions']}>
                 <button type="submit" disabled={updating} className={styles['danger']}>
-                  {updating ? 'Clearing...' : 'Clear Cache'}
+                  {updating ? 'clearing...' : 'clear cache'}
                 </button>
-                <button type="button" onClick={resetForms}>Reset</button>
+                <button type="button" onClick={resetForms}>reset</button>
               </div>
             </form>
           </div>
         ) : (
-          <div className={styles['error']}>Failed to load profile data</div>
+          <div className={styles['error']}>failed to load profile data</div>
         )}
       </div>
     </div>
