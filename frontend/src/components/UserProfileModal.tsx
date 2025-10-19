@@ -30,7 +30,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
   useEffect(() => {
     if (user) {
       setUserData(user);
-      setNewUsername(user.username);
+      setNewUsername('');
       setLoading(false);
     }
   }, [user]);
@@ -185,7 +185,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
           <div className={styles['modal-body']}>
             {/* Profile Info */}
             <div className={styles['profile-info']}>
-              <div className={styles['avatar']}>👨‍🎓</div>
+              <img src="/assets/profile_pic.png" alt="Profile" className={styles['avatar']} />
               <div className={styles['user-details']}>
                 <h3>{userData.username}</h3>
                 <div className={styles['stats']}>
