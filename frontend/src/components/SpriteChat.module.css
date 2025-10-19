@@ -307,11 +307,6 @@
   color: white;
 }
 
-.next-button:hover {
-  background: #3a82bd;
-  transform: translateY(-1px);
-}
-
 @media (max-width: 768px) {
   .sprite-chat-container {
     height: calc(100vh - 1px - 115px); /* Slightly less header height on mobile */
