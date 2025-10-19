@@ -366,6 +366,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
                 setCanSendMessage(true);
               }, 4500);
             } else {
+              setCanSendMessage(false);
               setTimeout(() => {
                 navigate('/file-upload');
                 setCanSendMessage(true);
