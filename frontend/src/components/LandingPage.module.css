@@ -76,6 +76,7 @@
 }
 
 .logo-educat {
+  font-weight: 800;
   font-size: 2rem;
   color: #333333;
 }
@@ -309,7 +310,7 @@
   border-radius: 35px;
   font-family: 'Roboto Mono', monospace;
   font-size: 1.3rem;
-  font-weight: 300;
+  font-weight: 800;
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: all 0.2s ease;
