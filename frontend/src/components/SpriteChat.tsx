@@ -344,7 +344,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
         const result = await response.json();
 
         if (result.success) {
-          console.log(result);
           const aiResponse: Message[] = result.messages.map((x: string) => {
             return {
               text: x,

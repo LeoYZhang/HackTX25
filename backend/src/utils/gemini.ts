@@ -122,7 +122,6 @@ export class ChatSession {
     });
     
     const response = res.text?.trim() ?? "";
-    console.log(response);
     return response;
   }
 

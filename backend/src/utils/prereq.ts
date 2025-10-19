@@ -52,8 +52,6 @@ If no prerequisites are needed, use an empty array for prerequisites.`;
     } else if (cleanResponse.startsWith('```')) {
       cleanResponse = cleanResponse.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
-
-    console.log(cleanResponse);
     
     const parsed = JSON.parse(cleanResponse);
     return parsed.prerequisites || [];
