@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes';
+import actionRoutes from './routes/actionRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', userRoutes);
+app.use('/api', actionRoutes);
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {
