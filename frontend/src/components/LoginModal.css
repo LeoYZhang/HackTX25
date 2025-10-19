@@ -40,7 +40,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 30px 16px 30px;
+  padding: 20px 20px 16px 30px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .login-modal-body {
-  padding: 30px;
+  padding: 30px 20px;
   text-align: center;
 }
 
@@ -124,7 +124,7 @@
 .login-modal-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   align-items: center;
   width: 100%;
 }
@@ -132,9 +132,8 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  width: 100%;
-  max-width: 280px;
+  gap: 8px;
+  width: 90%;
 }
 
 .form-label {
@@ -183,7 +182,7 @@
   background: #abd253;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 12px 12px;
   border-radius: 35px;
   font-size: 1.1rem;
   font-weight: 300;

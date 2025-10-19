@@ -22,19 +22,19 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose, onSi
   const steps = [
     {
       image: '/assets/teacher_base.png',
-      caption: 'Meet your AI tutor - ready to help you learn!'
+      caption: 'Meet your cat professor - ready to help you learn!'
     },
     {
       image: '/assets/teacher_talking.png',
-      caption: 'Ask any question and get instant explanations'
+      caption: 'You will be asked questions to test your understanding'
     },
     {
       image: '/assets/teacher_explanation.png',
-      caption: 'Learn step-by-step with detailed breakdowns'
+      caption: 'Learn step-by-step by being prompted to explain your problem solving process'
     },
     {
       image: '/assets/teacher_pleased.png',
-      caption: 'Master concepts with personalized guidance'
+      caption: 'Master concepts with additional questions after solving a problem'
     }
   ];
 
