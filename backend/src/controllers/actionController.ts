@@ -5,42 +5,45 @@ import { getPrerequisites } from '../utils/prereq';
 import { ChatSession, serializeChatSession } from '../utils/gemini';
 
 export const uploadProblem = async (req: Request, res: Response): Promise<void> =>  {
+    console.log(req.body);
     try {
-        const { username, file, mimeType } = req.body;
-        const user = await User.findOne({ username });
-        if (!user) {
-            res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
-            return;
-        }
-        const mindmap = JSON.parse(user.mindmap);
-        const problem = await extractOneProblem(file, mimeType);
-        type tuple = [string, boolean];
-        let stack: tuple[] = [];
-        let seenTopics: string[] = JSON.parse(mindmap.topics);
-        let prereqs = await getPrerequisites(problem, seenTopics);
-         for (const prereq of prereqs) {
-             stack.push([prereq, false]);
-         }
+        // const { username, file, mimeType } = req.body;
+        // const user = await User.findOne({ username });
+        // if (!user) {
+        //     res.status(404).json({
+        //         success: false,
+        //         message: 'User not found'
+        //     });
+        //     return;
+        // }
+        // const mindmap = JSON.parse(user.mindmap);
+        // const problem = await extractOneProblem(file, mimeType);
+        // type tuple = [string, boolean];
+        // let stack: tuple[] = [];
+        // let seenTopics: string[] = JSON.parse(mindmap.topics);
+        // let prereqs = await getPrerequisites(problem, seenTopics);
+        //  for (const prereq of prereqs) {
+        //      stack.push([prereq, false]);
+        //  }
          
-         const chatSession = new ChatSession({}, true, problem);
-         let msg = "";
-         if (stack.length > 0) {
-            const response = await chatSession.sendMessage(stack[stack.length - 1][0]);
-            msg = response;
-         }
-        const state = {
-            chatSession: serializeChatSession(chatSession),
-            stack: stack,
-            seenTopics: seenTopics
-        };
+        //  const chatSession = new ChatSession({}, true, problem);
+        //  let msg = "";
+        //  if (stack.length > 0) {
+        //     const response = await chatSession.sendMessage(stack[stack.length - 1][0]);
+        //     msg = response;
+        //  }
+        // const state = {
+        //     chatSession: serializeChatSession(chatSession),
+        //     stack: stack,
+        //     seenTopics: seenTopics
+        // };
 
-        await User.findOneAndUpdate(
-            { username },
-            { state: JSON.stringify(state) }
-        );
+        // await User.findOneAndUpdate(
+        //     { username },
+        //     { state: JSON.stringify(state) }
+        // );
+        
+        const msg = "Hello, how are you?";
         res.status(200).json({
             success: true,
             message: msg

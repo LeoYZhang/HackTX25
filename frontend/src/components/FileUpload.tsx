@@ -7,7 +7,7 @@ const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -17,20 +17,48 @@ const FileUpload: React.FC = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !user) return;
     
     setIsUploading(true);
     
-    // Simulate file upload process
-    setTimeout(() => {
+    try {
+      // Convert file to base64 for sending
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const fileData = reader.result as string;
+        const base64Data = fileData.split(',')[1]; // Remove data:type;base64, prefix
+        
+        const response = await fetch('http://localhost:5001/api/actions/upload-problem', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: user.username,
+            file: base64Data,
+            mimeType: selectedFile.type
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Navigate to sprite-chat-1 with the message from the response
+          localStorage.setItem('sprite-chat-1-message', result.message);
+          navigate('/sprite-chat-1');
+        } else {
+          console.error('Upload failed:', result.message);
+          // Handle error - could show a toast or error message
+        }
+      };
+      
+      reader.readAsDataURL(selectedFile);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      // Handle error
+    } finally {
       setIsUploading(false);
-      navigate('/sprite-chat-1');
-    }, 1500);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+    }
   };
 
   return (
