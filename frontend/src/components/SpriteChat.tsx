@@ -20,11 +20,13 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
+  // typing indicator handled via CSS; no JS ellipsis needed
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isNextClicked, setIsNextClicked] = useState(false);
   const [selectedTeacherSprite, setSelectedTeacherSprite] = useState<string>('teacher_base.png');
   const [selectedStudentSprite, setSelectedStudentSprite] = useState<string>('student_base.png');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { logout, user } = useAuth();
 
@@ -295,6 +297,17 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     }
   }, []);
 
+  // CSS-based typing indicator; no interval needed
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   // Reset textarea height when message is cleared
   useEffect(() => {
     if (message === '' && textareaRef.current) {
@@ -545,6 +558,22 @@ return (
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div 
+                className={`${styles['message-bubble']} ${styles['ai-message']}`}
+                aria-live="polite"
+                aria-label="assistant is typing"
+              >
+                <div className={styles['message-content']}>
+                  <span className={styles['typing-indicator']}>
+                    <span className={styles['typing-dot']} />
+                    <span className={styles['typing-dot']} />
+                    <span className={styles['typing-dot']} />
+                  </span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
           
           <form onSubmit={handleSendMessage} className={styles['chat-input-form']}>

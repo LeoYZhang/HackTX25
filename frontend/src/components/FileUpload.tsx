@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './FileUpload.module.css';
@@ -6,6 +6,7 @@ import styles from './FileUpload.module.css';
 const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [ellipsisCount, setEllipsisCount] = useState(0);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -18,48 +19,61 @@ const FileUpload: React.FC = () => {
 
   const handleUpload = async () => {
     if (!selectedFile || !user) return;
-    
+
     setIsUploading(true);
-    
+
+    const readFileAsBase64 = (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileData = reader.result as string;
+          const base64Data = fileData.split(',')[1] || '';
+          resolve(base64Data);
+        };
+        reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+
     try {
-      // Convert file to base64 for sending
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const fileData = reader.result as string;
-        const base64Data = fileData.split(',')[1]; // Remove data:type;base64, prefix
-        
-        const response = await fetch('http://localhost:5001/api/actions/upload-problem', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: user.username,
-            file: base64Data,
-            mimeType: selectedFile.type
-          })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-          // Navigate to sprite-chat-1 with the message from the response
-          localStorage.setItem('sprite-chat-1-initial', JSON.stringify(result.messages));
-          navigate('/sprite-chat-1');
-        } else {
-          console.error('Upload failed:', result.error);
-          // Handle error - could show a toast or error message
-        }
-      };
-      
-      reader.readAsDataURL(selectedFile);
+      const base64Data = await readFileAsBase64(selectedFile);
+
+      const response = await fetch('http://localhost:5001/api/actions/upload-problem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: user.username,
+          file: base64Data,
+          mimeType: selectedFile.type,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        localStorage.setItem('sprite-chat-1-initial', JSON.stringify(result.messages));
+        navigate('/sprite-chat-1');
+      } else {
+        console.error('Upload failed:', result.error);
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
-      // Handle error
     } finally {
       setIsUploading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isUploading) {
+      setEllipsisCount(0);
+      return;
+    }
+    const intervalId = setInterval(() => {
+      setEllipsisCount((prev) => (prev + 1) % 4);
+    }, 450);
+    return () => clearInterval(intervalId);
+  }, [isUploading]);
 
   return (
     <div className={styles['file-upload-container']}>
@@ -107,7 +121,7 @@ const FileUpload: React.FC = () => {
             className={styles['upload-button']}
             disabled={!selectedFile || isUploading}
           >
-            {isUploading ? 'processing...' : 'start learning'}
+            {isUploading ? `parsing file${'.'.repeat(ellipsisCount)}` : 'start learning'}
           </button>
         </div>
       </main>
