@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import styles from './SpriteChat.module.css';
 
 interface SpriteChatProps {
@@ -24,8 +26,165 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const [selectedStudentSprite, setSelectedStudentSprite] = useState<string>('student_base.png');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
-  const location = useLocation();
   const { logout, user } = useAuth();
+
+  // Function to convert LaTeX to speech-friendly text
+  const convertLatexToSpeech = (text: string): string => {
+    // Remove block math delimiters ($$...$$)
+    let speechText = text.replace(/\$\$(.*?)\$\$/g, (match, content) => {
+      return convertMathToSpeech(content);
+    });
+    
+    // Remove inline math delimiters ($...$)
+    speechText = speechText.replace(/\$(.*?)\$/g, (match, content) => {
+      return convertMathToSpeech(content);
+    });
+    
+    return speechText;
+  };
+
+  // Function to convert mathematical expressions to speech-friendly text
+  const convertMathToSpeech = (mathExpression: string): string => {
+    let speechText = mathExpression;
+    
+    // Common mathematical symbols and their speech equivalents
+    const mathSymbols: { [key: string]: string } = {
+      // Basic operations
+      '+': ' plus ',
+      '-': ' minus ',
+      '*': ' times ',
+      '/': ' divided by ',
+      '=': ' equals ',
+      '\\neq': ' not equals ',
+      '\\approx': ' approximately equals ',
+      '\\equiv': ' is equivalent to ',
+      
+      // Comparison symbols
+      '<': ' less than ',
+      '>': ' greater than ',
+      '\\leq': ' less than or equal to ',
+      '\\geq': ' greater than or equal to ',
+      
+      // Powers and roots
+      '^': ' to the power of ',
+      '\\sqrt': ' square root of ',
+      '\\sqrt[3]': ' cube root of ',
+      '\\sqrt[4]': ' fourth root of ',
+      
+      // Fractions
+      '\\frac': ' fraction ',
+      
+      // Greek letters
+      '\\alpha': ' alpha ',
+      '\\beta': ' beta ',
+      '\\gamma': ' gamma ',
+      '\\delta': ' delta ',
+      '\\epsilon': ' epsilon ',
+      '\\theta': ' theta ',
+      '\\lambda': ' lambda ',
+      '\\mu': ' mu ',
+      '\\pi': ' pi ',
+      '\\sigma': ' sigma ',
+      '\\tau': ' tau ',
+      '\\phi': ' phi ',
+      '\\omega': ' omega ',
+      
+      // Functions
+      '\\sin': ' sine of ',
+      '\\cos': ' cosine of ',
+      '\\tan': ' tangent of ',
+      '\\log': ' log of ',
+      '\\ln': ' natural log of ',
+      '\\exp': ' e to the power of ',
+      
+      // Sets and logic
+      '\\in': ' is in ',
+      '\\notin': ' is not in ',
+      '\\subset': ' is a subset of ',
+      '\\supset': ' is a superset of ',
+      '\\cup': ' union ',
+      '\\cap': ' intersection ',
+      '\\emptyset': ' empty set ',
+      
+      // Calculus
+      '\\int': ' integral of ',
+      '\\sum': ' sum of ',
+      '\\prod': ' product of ',
+      '\\lim': ' limit of ',
+      '\\infty': ' infinity ',
+      
+      // Arrows
+      '\\rightarrow': ' approaches ',
+      '\\leftarrow': ' approaches from ',
+      '\\leftrightarrow': ' if and only if ',
+      
+      // Parentheses and brackets
+      '\\left(': ' open parenthesis ',
+      '\\right)': ' close parenthesis ',
+      '\\left[': ' open bracket ',
+      '\\right]': ' close bracket ',
+      '\\left\\{': ' open brace ',
+      '\\right\\}': ' close brace ',
+    };
+    
+    // Replace mathematical symbols
+    Object.entries(mathSymbols).forEach(([symbol, replacement]) => {
+      const regex = new RegExp(symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      speechText = speechText.replace(regex, replacement);
+    });
+    
+    // Handle fractions more specifically
+    speechText = speechText.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, 'fraction $1 over $2');
+    
+    // Handle powers with curly braces
+    speechText = speechText.replace(/\^\{([^}]+)\}/g, ' to the power of $1');
+    
+    // Handle subscripts
+    speechText = speechText.replace(/_\{([^}]+)\}/g, ' sub $1');
+    
+    // Clean up extra spaces
+    speechText = speechText.replace(/\s+/g, ' ').trim();
+    
+    return speechText;
+  };
+
+  // Function to generate and play speech for AI responses
+  const playAISpeech = async (text: string) => {
+    // return for now to avoid wasting API calls
+    return;
+    try {
+      // Convert LaTeX to speech-friendly text
+      const speechText = convertLatexToSpeech(text);
+      
+      const response = await fetch('http://localhost:5001/api/actions/generate-tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: speechText })
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        // Play the audio
+        audio.play().catch(error => {
+          console.error('Error playing audio:', error);
+        });
+
+        // Clean up the URL after playing
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+        };
+      } else {
+        console.error('Failed to generate speech');
+      }
+    } catch (error) {
+      console.error('Error generating speech:', error);
+    }
+  };
 
   const teacherSprites = [
     'teacher_base.png',
@@ -45,6 +204,44 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
   const currentSprites = spriteNumber === 1 ? teacherSprites : studentSprites;
   const currentSelectedSprite = spriteNumber === 1 ? selectedTeacherSprite : selectedStudentSprite;
 
+  // Function to render text with KaTeX support
+  const renderTextWithMath = (text: string) => {
+    // Split text by block math delimiters ($$...$$)
+    const blockMathRegex = /\$\$(.*?)\$\$/g;
+    const parts = text.split(blockMathRegex);
+    
+    return parts.map((part, index) => {
+      // If it's an odd index, it's a block math expression
+      if (index % 2 === 1) {
+        try {
+          return <BlockMath key={index} math={part} />;
+        } catch (error) {
+          console.error('Error rendering block math:', error);
+          return <span key={index} style={{ color: 'red' }}>Math Error: {part}</span>;
+        }
+      }
+      
+      // For regular text, also check for inline math ($...$)
+      const inlineMathRegex = /\$(.*?)\$/g;
+      const inlineParts = part.split(inlineMathRegex);
+      
+      return inlineParts.map((inlinePart, inlineIndex) => {
+        // If it's an odd index, it's an inline math expression
+        if (inlineIndex % 2 === 1) {
+          try {
+            return <InlineMath key={`${index}-${inlineIndex}`} math={inlinePart} />;
+          } catch (error) {
+            console.error('Error rendering inline math:', error);
+            return <span key={`${index}-${inlineIndex}`} style={{ color: 'red' }}>Math Error: {inlinePart}</span>;
+          }
+        }
+        
+        // Regular text
+        return <span key={`${index}-${inlineIndex}`}>{inlinePart}</span>;
+      });
+    });
+  };
+
   // Load saved messages for this page
   useEffect(() => {
     const savedMessageText = localStorage[`sprite-chat-${spriteNumber}-message`];
@@ -58,6 +255,9 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
       timestamp: new Date()
     };
     setMessages([welcomeMessage]);
+    
+    // Generate and play speech for welcome message
+    playAISpeech(welcomeMessage.text);
     
     // Reset next button state when switching between sprites
     setIsNextClicked(false);
@@ -140,6 +340,9 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
           };
           setMessages(prev => [...prev, aiResponse]);
           
+          // Generate and play speech for AI response
+          playAISpeech(result.message);
+          
           // Check if teacher mode is done
           if (result.done) {
             if (spriteNumber === 1) {
@@ -148,7 +351,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
               setTimeout(() => {
                 navigate('/sprite-chat-2');
                 setCanSendMessage(true);
-              }, 3000);
+              }, 4500);
             } else {
               alert("Student mode is done");
             }
@@ -161,6 +364,8 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
             timestamp: new Date()
           };
           setMessages(prev => [...prev, errorResponse]);
+
+          playAISpeech(errorResponse.text);
         }
       }
     } catch (error) {
@@ -224,11 +429,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   const handleNext = async () => {
     if (spriteNumber === 1 && user && !isNextClicked) {
       setIsNextClicked(true);
@@ -255,13 +455,17 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
             timestamp: new Date()
           };
           setMessages(prev => [...prev, aiResponse]);
+          
+          // Generate and play speech for AI response
+          playAISpeech(result.message);
+          
           // Navigate to sprite-chat-2 after successful API call
           setCanSendMessage(false);
           // Redirect to sprite-chat-2 after 3 seconds
           setTimeout(() => {
             navigate('/sprite-chat-2');
             setCanSendMessage(true);
-          }, 3000);
+          }, 4500);
         } else {
           console.error('Failed to complete teacher mode:', result.message);
           // Still navigate even if API fails, but log the error
@@ -280,21 +484,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
       // Fallback for when no user is available
       navigate('/sprite-chat-2');
     }
-  };
-
-  const handleBack = () => {
-    if (spriteNumber === 2) {
-      navigate('/sprite-chat-1');
-    }
-  };
-
-  const handleRestart = () => {
-    // Clear messages and initial messages for both pages
-    localStorage.removeItem('sprite-chat-1-messages');
-    localStorage.removeItem('sprite-chat-2-messages');
-    localStorage.removeItem('sprite-chat-1-initial-message');
-    localStorage.removeItem('sprite-chat-2-initial-message');
-    navigate('/file-upload');
   };
 
 return (
@@ -333,7 +522,7 @@ return (
                 className={`${styles['message-bubble']} ${msg.isUser ? styles['user-message'] : styles['ai-message']}`}
               >
                 <div className={styles['message-content']}>
-                  {msg.text}
+                  {renderTextWithMath(msg.text)}
                 </div>
               </div>
             ))}
