@@ -304,6 +304,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         if (response === "Done") {
             response = "Yay! I now understand how to solve the problem!";
 
+            const points = await chatSession.getPoints();
+
             // Student has completed their understanding
             const state = {
                 chatSession: serializeChatSession(chatSession),
@@ -313,14 +315,16 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
 
             await User.findOneAndUpdate(
                 { username },
-                { state: JSON.stringify(state) }
+                { 
+                    state: JSON.stringify(state),
+                    $inc: { points: points }
+                }
             );
 
             res.status(200).json({
                 success: true,
                 messages: ["Congratulations! You have successfully demonstrated your understanding of the problem and its solution."],
-                done: true,
-                points: await chatSession.getPoints()
+                done: true
             });
             return;
         }
@@ -340,8 +344,7 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         res.status(200).json({
             success: true,
             messages: [response],
-            done: false,
-            points: await chatSession.getPoints()
+            done: false
         });
     } catch (error) {
         console.error('Error in sendStudentCatMessage:', error);

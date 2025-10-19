@@ -35,6 +35,31 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
     }
   }, [user]);
 
+  // Fetch latest user details from backend when modal opens
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!isOpen || !user?.id) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`http://localhost:5001/api/users/${user.id}`);
+        if (response.ok) {
+          const result = await response.json();
+          setUserData(result.data);
+        } else {
+          const errorData = await response.json();
+          setError(errorData.message || 'Failed to load user profile');
+        }
+      } catch (err) {
+        setError('Network error. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [isOpen, user?.id]);
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
