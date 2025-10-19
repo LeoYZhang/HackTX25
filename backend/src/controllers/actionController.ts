@@ -302,6 +302,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         
         // Check if the student has completed their understanding
         if (response === "Done") {
+            response = "Yay! I now understand how to solve the problem!";
+
             // Student has completed their understanding
             const state = {
                 chatSession: serializeChatSession(chatSession),

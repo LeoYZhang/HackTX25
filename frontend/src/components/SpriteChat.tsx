@@ -366,7 +366,10 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
                 setCanSendMessage(true);
               }, 4500);
             } else {
-              alert("Student mode is done");
+              setTimeout(() => {
+                navigate('/file-upload');
+                setCanSendMessage(true);
+              }, 3000);
             }
           }
         } else {
