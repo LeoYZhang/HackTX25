@@ -319,7 +319,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
             res.status(200).json({
                 success: true,
                 messages: ["Congratulations! You have successfully demonstrated your understanding of the problem and its solution."],
-                done: true
+                done: true,
+                points: await chatSession.getPoints()
             });
             return;
         }
@@ -339,7 +340,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         res.status(200).json({
             success: true,
             messages: [response],
-            done: false
+            done: false,
+            points: await chatSession.getPoints()
         });
     } catch (error) {
         console.error('Error in sendStudentCatMessage:', error);

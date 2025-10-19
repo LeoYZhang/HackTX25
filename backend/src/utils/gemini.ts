@@ -234,6 +234,16 @@ Ask probing questions about their reasoning, methodology, and understanding of t
     return this.isTeacherMode;
   }
 
+  async getPoints(): Promise<number> {
+    if (this.isTeacherMode) {
+      throw new Error("getPoints can only be called in student mode");
+    }
+    const response = await this.sendMessage(
+      "Critically and harshly grade the student's overall understanding across the ENTIRE conversation on a scale of 0 to 100. Consider correctness, reasoning, consistency, and conceptual depth. Penalize earlier mistakes and shallow reasoning; do not overweight the most recent message (avoid recency bias). Return a SINGLE integer from 0 to 100 only, with no words, symbols, or explanation."
+    );
+    return parseFloat(response);
+  }
+
   /**
    * Serialize the chat session to a JSON string
    */
