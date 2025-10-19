@@ -29,11 +29,6 @@ const LandingPage: React.FC = () => {
             <span className="logo-educat">edu</span>
           </span>
         </div>
-        <button className="dark-mode-toggle">
-          <svg className="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
-          <path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2z" />
-          </svg>
-        </button>
       </header>
 
       {/* Main Content */}
