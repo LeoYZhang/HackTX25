@@ -102,9 +102,13 @@ export interface ConversationMessage {
 export class ChatSession {
   private messages: ConversationMessage[] = [];
   private options: GeminiQueryOptions;
+  private isTeacherMode: boolean;
+  private problem: string;
 
-  constructor(options: GeminiQueryOptions = {}) {
+  constructor(options: GeminiQueryOptions = {}, isTeacherMode: boolean = false, problem: string = "") {
     this.options = options;
+    this.isTeacherMode = isTeacherMode;
+    this.problem = problem;
   }
 
   /**
@@ -117,10 +121,16 @@ export class ChatSession {
     // Merge options
     const mergedOptions = { ...this.options, ...additionalOptions };
     
-    // Convert conversation history to Gemini's expected format
-    const contents = this.messages.map(msg => 
-      createUserContent([{ text: msg.content }])
-    );
+    // Get base prompt based on mode
+    const basePrompt = this.getBasePrompt();
+    
+    // Convert conversation history to Gemini's expected format with base prompt
+    const contents = [
+      createUserContent([{ text: basePrompt }]),
+      ...this.messages.map(msg => 
+        createUserContent([{ text: msg.content }])
+      )
+    ];
     
     const res = await ai.models.generateContent({
       model: mergedOptions.model || "gemini-2.5-flash-lite",
@@ -133,6 +143,33 @@ export class ChatSession {
     this.messages.push({ role: 'assistant', content: response });
     
     return response;
+  }
+
+  /**
+   * Get the base prompt based on the mode
+   */
+  private getBasePrompt(): string {
+    const problemContext = this.problem ? `\n\nMain problem to solve: ${this.problem}` : "";
+    
+    if (this.isTeacherMode) {
+      return `You are a math teacher AI whose goal is to nudge the user towards solving the main problem without explicitly providing solutions.${problemContext}
+
+Your role is to:
+1) If the input is a topic related to the main problem, generate a question about that topic to test understanding and nudge the user towards solving the main problem.
+2) If the input is a user response to your previous question, evaluate if the response truly shows understanding of the topic and return either "Yes" or "No".
+3) If the input is "Explain {topic}", provide an explanation of the given topic, specifically focusing on the aspects of that topic that relate to the main problem.
+
+Do not provide direct solutions or answers. Only ask guiding questions, evaluate responses, or explain topics when explicitly requested.`;
+    } else {
+      return `You are a math learning companion AI whose goal is to test and evaluate the user's understanding of the main problem and its solution.${problemContext}
+
+Your role is to:
+1) The user's first response will contain their solution to the main problem.
+2) For the rest of the conversation, ask questions to pick at the user's solutions and responses to ensure their understanding is solid.
+3) If you believe the user fully understands everything necessary, return "Done".
+
+Ask probing questions about their reasoning, methodology, and understanding of the concepts involved. Challenge their thinking to ensure deep comprehension.`;
+    }
   }
 
   /**
@@ -176,7 +213,9 @@ export class ChatSession {
   serialize(): string {
     const sessionData = {
       messages: this.getHistory(),
-      options: this.getOptions()
+      options: this.getOptions(),
+      isTeacherMode: this.isTeacherMode,
+      problem: this.problem
     };
     return JSON.stringify(sessionData);
   }
@@ -193,7 +232,7 @@ export class ChatSession {
    */
   static deserialize(serializedData: string): ChatSession {
     const sessionData = JSON.parse(serializedData);
-    const session = new ChatSession(sessionData.options);
+    const session = new ChatSession(sessionData.options, sessionData.isTeacherMode || false, sessionData.problem || "");
     
     // Restore the messages array
     if (sessionData.messages && Array.isArray(sessionData.messages)) {
