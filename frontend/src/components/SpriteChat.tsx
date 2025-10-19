@@ -244,24 +244,35 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
 
   // Load saved messages for this page
   useEffect(() => {
-    const savedMessageText = localStorage[`sprite-chat-${spriteNumber}-message`];
+    const savedInitialJson = localStorage[`sprite-chat-${spriteNumber}-initial`];
+    let savedMessages: string[] = [];
+    if (savedInitialJson) {
+      savedMessages = JSON.parse(localStorage[`sprite-chat-${spriteNumber}-initial`]);
+    }
   
     // Initialize with initial message from upload or default welcome message
-    const welcomeMessage: Message = {
-      text: savedMessageText || (spriteNumber === 1 
-        ? "Can you explain the problem to me?" 
-        : "Can you explain your solution to me?"),
-      isUser: false,
-      timestamp: new Date()
-    };
-    setMessages([welcomeMessage]);
-    
-    // Generate and play speech for welcome message
-    playAISpeech(welcomeMessage.text);
+    if (savedMessages.length > 0) {
+      setMessages(savedMessages.map(x => {
+        return {
+          text: x,
+          isUser: false,
+          timestamp: new Date()
+        }
+      }));
+    } else {
+      const welcomeMessage: Message = {
+        text: (spriteNumber === 1 
+          ? "Sorry, I couldn't read the file. Can you explain the problem to me?" 
+          : "Can you explain your solution to me?"),
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage]);
+    }
     
     // Reset next button state when switching between sprites
     setIsNextClicked(false);
-  }, [spriteNumber, navigate]);
+  }, [navigate]);
 
   // Save messages whenever they change
   useEffect(() => {
@@ -333,15 +344,18 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
         const result = await response.json();
 
         if (result.success) {
-          const aiResponse: Message = {
-            text: result.message,
-            isUser: false,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiResponse]);
+          console.log(result);
+          const aiResponse: Message[] = result.messages.map((x: string) => {
+            return {
+              text: x,
+              isUser: false,
+              timestamp: new Date()
+            }
+          });
+          setMessages(prev => [...prev, ...aiResponse]);
           
           // Generate and play speech for AI response
-          playAISpeech(result.message);
+          // playAISpeech(result.messages);
           
           // Check if teacher mode is done
           if (result.done) {
@@ -365,7 +379,7 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
           };
           setMessages(prev => [...prev, errorResponse]);
 
-          playAISpeech(errorResponse.text);
+          // playAISpeech(errorResponse.text);
         }
       }
     } catch (error) {
@@ -449,15 +463,17 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
         const result = await response.json();
 
         if (result.success) {
-          const aiResponse: Message = {
-            text: result.message,
-            isUser: false,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiResponse]);
+          const aiResponse: Message[] = result.messages.map((x: string) => {
+            return {
+              text: x,
+              isUser: false,
+              timestamp: new Date()
+            }
+          });
+          setMessages(prev => [...prev, ...aiResponse]);
           
           // Generate and play speech for AI response
-          playAISpeech(result.message);
+          // playAISpeech(result.messages);
           
           // Navigate to sprite-chat-2 after successful API call
           setCanSendMessage(false);

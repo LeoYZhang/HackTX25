@@ -44,10 +44,10 @@ const FileUpload: React.FC = () => {
         
         if (result.success) {
           // Navigate to sprite-chat-1 with the message from the response
-          localStorage.setItem('sprite-chat-1-message', result.message);
+          localStorage.setItem('sprite-chat-1-initial', JSON.stringify(result.messages));
           navigate('/sprite-chat-1');
         } else {
-          console.error('Upload failed:', result.message);
+          console.error('Upload failed:', result.error);
           // Handle error - could show a toast or error message
         }
       };

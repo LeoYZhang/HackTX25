@@ -45,10 +45,10 @@ export const uploadProblem = async (req: Request, res: Response): Promise<void> 
          }
          
          const chatSession = new ChatSession({}, true, problem);
-         let msg = "";
+         let messages = [];
          if (stack.length > 0) {
-            const response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
-            msg = response;
+            messages.push(await chatSession.getProblem());
+            messages.push(await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]));
          }
         const state = {
             chatSession: serializeChatSession(chatSession),
@@ -63,13 +63,13 @@ export const uploadProblem = async (req: Request, res: Response): Promise<void> 
         
         res.status(200).json({
             success: true,
-            message: msg
+            messages: messages
         });
     } catch (error) {
         console.error('Error in uploadProblem:', error);
         res.status(500).json({
             success: false,
-            message: 'Error processing problem upload',
+            messages: [],
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
@@ -82,15 +82,17 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
         if (!user) {
             res.status(404).json({
                 success: false,
-                message: 'User not found'
+                messages: [],
+                error: 'User not found'
             });
             return;
         }
         const chatSession = ChatSession.deserialize(user.state);
         let stack = JSON.parse(user.state).stack;
         let seenTopics = JSON.parse(user.state).seenTopics;
+        let messages = [];
         let response = await chatSession.sendMessage('This is a user response, respond with either "Yes" or "No" to indicate if the user shows understanding of the topic and correctly answers your previous question:' + message);
-        
+
         let mindmap = JSON.parse(user.mindmap);
         // Ensure mindmap has topics array - handle both old and new structures
         if (!mindmap.topics) {
@@ -99,7 +101,8 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
             // If topics is stored as a JSON string, parse it
             mindmap.topics = JSON.parse(mindmap.topics);
         }
-        if (response === "Yes") {
+        if (response.startsWith("Yes")) {
+            messages.push(response.substring(4).trim());
             type tuple = [string, boolean];
             let element: tuple = stack.pop();
             if (!element[1]) {
@@ -108,10 +111,13 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
             // Ask about the next topic in the stack
             if (stack.length > 0) {
                 response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+                messages.push(response);
             } else {
                 response = "No more topics available. You're ready to solve the problem!";
+                messages.push(response);
             }
-        } else if (response === "No") {
+        } else if (response.startsWith("No")) {
+            messages.push(response.substring(3).trim());
             stack[stack.length - 1][1] = true;
             let subtopics = await getPrerequisites(stack[stack.length - 1][0], seenTopics);
             if (subtopics.length > 0) {
@@ -120,12 +126,16 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
                     stack.push([subtopic, false]);
                 }
                 response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+                messages.push(response);
             } else {
                 response = await chatSession.sendMessage("Explain " + stack.pop()![0] + "\n");
+                messages.push(response);
                 if (stack.length > 0) {
-                    response += await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+                    response = await chatSession.sendMessage('Generate a question about this topic to test understanding and nudge the user towards solving the main problem: ' + stack[stack.length - 1][0]);
+                    messages.push(response);
                 } else {
                     response = "No more topics available. You're ready to solve the problem!";
+                    messages.push(response);
                 }
             }
         } else {
@@ -159,7 +169,7 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
 
             res.status(200).json({
                 success: true,
-                message: response,
+                messages: messages,
                 done: true
             });
             return;
@@ -180,14 +190,14 @@ export const sendTeacherCatMessage = async (req: Request, res: Response): Promis
 
         res.status(200).json({
             success: true,
-            message: response,
+            messages: messages,
             done: false
         });
     } catch (error) {
         console.error('Error in sendTeacherCatMessage:', error);
         res.status(500).json({
             success: false,
-            message: 'Error processing teacher message',
+            messages: [],
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
@@ -276,7 +286,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         if (!user) {
             res.status(404).json({
                 success: false,
-                message: 'User not found'
+                messages: [],
+                error: 'User not found'
             });
             return;
         }
@@ -286,7 +297,7 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         if (chatSession.getHistory().length > 1) {
             response = await chatSession.sendMessage('This is a user response to your previous question. If you believe the user fully understands everything necessary, return only the text "Done" and nothing else. If not, either ask a follow up question to their response or ask a question about their initial solution: ' + message);
         } else {
-            response = await chatSession.sendMessage('This is the user\'s initial solution to the problem, ask questions to pick at the user\'s solution and responses to ensure their understanding is solid. If you believe the user fully understands everything necessary, return only the text "Done" and nothing else: ' + message);
+            response = await chatSession.sendMessage('This is the user\'s initial solution to the problem, ask questions to pick at the user\'s solution and responses to ensure their understanding is solid. If you believe the user fully understands everything necessary, return only the text "Done" and nothing else:' + message);
         }
         
         // Check if the student has completed their understanding
@@ -305,8 +316,8 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
 
             res.status(200).json({
                 success: true,
-                message: "Congratulations! You have successfully demonstrated your understanding of the problem and its solution.",
-                isComplete: true
+                messages: ["Congratulations! You have successfully demonstrated your understanding of the problem and its solution."],
+                done: true
             });
             return;
         }
@@ -325,14 +336,14 @@ export const sendStudentCatMessage = async (req: Request, res: Response): Promis
         
         res.status(200).json({
             success: true,
-            message: response,
-            isComplete: false
+            messages: [response],
+            done: false
         });
     } catch (error) {
         console.error('Error in sendStudentCatMessage:', error);
         res.status(500).json({
             success: false,
-            message: 'Error processing student message',
+            messages: [],
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }

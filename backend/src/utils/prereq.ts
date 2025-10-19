@@ -18,7 +18,7 @@ export async function getPrerequisites(
 
 Topic: ${topic}${existingTopicsList}
 
-Generate 0-5 prerequisite subtopics that are essential for understanding the given topic.
+Generate 0-5 prerequisite subtopics that are essential for understanding the given topic. Do not include any topics that are too much simpler than the given topic.
 
 IMPORTANT RULES:
 1. Do NOT include any topics that are synonyms or very similar to existing topics
@@ -52,6 +52,8 @@ If no prerequisites are needed, use an empty array for prerequisites.`;
     } else if (cleanResponse.startsWith('```')) {
       cleanResponse = cleanResponse.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
+
+    console.log(cleanResponse);
     
     const parsed = JSON.parse(cleanResponse);
     return parsed.prerequisites || [];

@@ -111,6 +111,21 @@ export class ChatSession {
     this.problem = problem;
   }
 
+  async getProblem(): Promise<string> {
+    const contents = [
+      createUserContent([{ text: `Repeat this problem in latex formatting if it has math symbols: ${this.problem}. Do not return any heading or repeat my question, just output what I asked for. Prefix with "The problem is". Make sure to fully state the problem.` }])
+    ];
+
+    const res = await ai.models.generateContent({
+      model: "gemini-2.5-flash-lite",
+      contents
+    });
+    
+    const response = res.text?.trim() ?? "";
+    console.log(response);
+    return response;
+  }
+
   /**
    * Send a message and get a response from Gemini with full conversation context
    */
@@ -156,22 +171,23 @@ export class ChatSession {
 
 Your role is to:
 1) If the input is a topic related to the main problem, generate a question about that topic to test understanding and nudge the user towards solving the main problem.
-2) If the input is a user response to your previous question, evaluate if the response truly shows understanding of the topic and return either "Yes" or "No".
-3) If the input is "Explain {topic}", provide an explanation of the given topic, specifically focusing on the aspects of that topic that relate to the main problem.
+2) If the input is a user response to your previous question, evaluate if the response truly shows understanding of the topic and return either "Yes." or "No.", then a brief explanation. Do not ask a question in your response.
+3) If the input is related to "Explain {topic}", provide an explanation of the given topic, specifically focusing on the aspects of that topic that relate to the main problem.
 
 CRITICAL FORMATTING RULES:
-- For topic questions: Ask a specific question about the topic
-- For user responses: Respond with ONLY "Yes" or "No" - no other text
+- For topic questions: Prefix the question with saying that you're going to ask a question about that topic. Ask a specific question about the topic.
+- For user responses: The response string must begin with "Yes." or "No." - no other text. Make sure to include an explanation, but keep it brief. Do not ask a question in your response.
 - For explanations: Provide a clear explanation of the topic
+- If the user is off topic, gently nudge them back to the topic.
 
-Do not provide direct solutions or answers. Only ask guiding questions, evaluate responses, or explain topics when explicitly requested.`;
+Do not ever provide direct solutions or answers. Only ask guiding questions, evaluate responses, or explain topics when explicitly requested.`;
     } else {
       return `You are a math learning companion AI whose goal is to test and evaluate the user's understanding of the main problem and its solution.${problemContext}
 
 Your role is to:
 1) The user's first response will contain their solution to the main problem.
 2) For the rest of the conversation, ask questions to pick at the user's solutions and responses to ensure their understanding is solid.
-3) If you believe the user fully understands everything necessary, return "Done".
+3) If you believe the user fully understands everything necessary, return "Done". In this case, only return "Done" and nothing else.
 
 Ask probing questions about their reasoning, methodology, and understanding of the concepts involved. Challenge their thinking to ensure deep comprehension.`;
     }
