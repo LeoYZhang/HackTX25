@@ -63,6 +63,16 @@ const FileUpload: React.FC = () => {
 
   return (
     <div className={styles['file-upload-container']}>
+      <img 
+        src="/assets/orange_cat_yarn.png" 
+        alt="Orange cat with yarn" 
+        className={styles['orange-cat']}
+      />
+      <img 
+        src="/assets/gray_cat_yarn.png" 
+        alt="Gray cat with yarn" 
+        className={styles['gray-cat']}
+      />
       <main className={styles['file-upload-content']}>
         <div className={styles['upload-card']}>
           <h2>upload your questions</h2>
@@ -79,12 +89,12 @@ const FileUpload: React.FC = () => {
             <label htmlFor="file-input" className={styles['file-label']}>
               {selectedFile ? (
                 <div className={styles['file-selected']}>
-                  <span className={styles['file-icon']}>📄</span>
+                  <img src="/assets/icons/page.png" alt="Document" className={styles['file-icon']} />
                   <span className={styles['file-name']}>{selectedFile.name}</span>
                 </div>
               ) : (
                 <div className={styles['file-placeholder']}>
-                  <span className={styles['upload-icon-large']}>📁</span>
+                  <img src="/assets/icons/folder.png" alt="Folder" className={styles['upload-icon-large']} />
                   <span>click to select a file</span>
                   <span className={styles['file-types']}>supports: .txt, .pdf, .doc, .docx</span>
                 </div>
