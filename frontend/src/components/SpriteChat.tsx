@@ -212,46 +212,6 @@ const SpriteChat: React.FC<SpriteChatProps> = ({ spriteNumber }) => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage(e);
-    }
-  };
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-    
-    // Auto-resize textarea
-    const textarea = e.target;
-    
-    // Reset height to auto to get accurate scrollHeight
-    textarea.style.height = 'auto';
-    
-    // Get the scroll height and calculate new height
-    const scrollHeight = textarea.scrollHeight;
-    const minHeight = 46; // Minimum height in pixels
-    const maxHeight = 120; // Maximum height in pixels
-    
-    // Calculate new height, ensuring it never goes below minimum
-    let newHeight = scrollHeight;
-    if (newHeight < minHeight) {
-      newHeight = minHeight;
-    } else if (newHeight > maxHeight) {
-      newHeight = maxHeight;
-    }
-    
-    // Set the height
-    textarea.style.height = newHeight + 'px';
-    
-    // Only show scrollbar when content exceeds max height
-    if (scrollHeight > maxHeight) {
-      textarea.style.overflowY = 'auto';
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-  };
-
   const handleSpriteSelect = (spritePath: string) => {
     if (spriteNumber === 1) {
       setSelectedTeacherSprite(spritePath);
